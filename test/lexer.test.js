@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 import { lex } from '../lib/lexer.js'
 
 function lexed(input) {
