@@ -77,6 +77,10 @@ describe('lexer', () => {
     expect(lexed('.128')).
       toEqual([['number', '.128']])
   })
+
+  it('double quoted values produce string tokens', () => {
+    expect(lexed('"dog"')).toEqual([['string', 'dog']])
+  })
 })
 
 /*
