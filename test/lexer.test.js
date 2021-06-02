@@ -101,30 +101,25 @@ describe('lexer', () => {
     expect(() => lexed('"foo')).
       toThrow("A string ran off the end of the program.")
   })
+
+  it('commas produce comma tokens', () => {
+    expectLexed(',').toEqual([',', ''])
+  })
+
+  it('equals produce an equals tokens', () => {
+    expectLexed('=').toEqual(['=', ''])
+  })
+
+  it('semicolons produce semicolon tokens', () => {
+    expectLexed(';').toEqual([';', ''])
+  })
+
+  it('colons produce colon tokens', () => {
+    expectLexed(':').toEqual([':', ''])
+  })
 })
 
-/*
-@test
-def Commas_produce_comma_tokens():
-    assert_that(lexed(","), equals([(",", "")]))
-
-
-@test
-def Equals_produces_an_equals_token():
-    assert_that(lexed("="), equals([("=", "")]))
-
-
-@test
-def Semicolons_produce_semicolon_tokens():
-    assert_that(lexed(";"), equals([(";", "")]))
-
-
-@test
-def Colons_produce_colon_tokens():
-    assert_that(lexed(":"), equals([(":", "")]))
-
-
-@test
+/*@test
 def Arithmetic_operators_produce_operation_tokens():
     assert_that(lexed("+"), equals([("operation", "+")]))
     assert_that(lexed("-"), equals([("operation", "-")]))
