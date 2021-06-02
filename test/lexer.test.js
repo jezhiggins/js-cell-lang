@@ -30,16 +30,14 @@ describe('lexer', () => {
   it('single letter becomes a symbol token', () => {
     expect(lexed('a')).toEqual([['symbol', 'a']])
   })
+
+  it('multiple brackets become multiple tokens', () => {
+    expect(lexed('()')).
+      toEqual([['(', ''], [')', '']])
+  })
 })
 
 /*
-@test
-def Multiple_brackets_become_multiple_tokens():
-    assert_that(
-        lexed("()"),
-        equals([("(", ""), (")", "")])
-    )
-
 @test
 def Multiple_letters_become_a_symbol_token():
     assert_that(lexed("foo"), equals([("symbol", "foo")]))
