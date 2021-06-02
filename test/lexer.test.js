@@ -3,57 +3,32 @@
 import { lex } from '../lib/lexer.js'
 
 function lexed(input) {
-  return []
+  return [...lex(input)]
 }
 
 describe('lexer', () => {
   it('empty file produces nothing', () => {
     expect(lexed('')).toEqual([])
   })
+
+  it('open bracket produces open bracket token', () => {
+    expect(lexed('(')).toEqual([["(", '']])
+  })
+
+  it('close bracket produces close bracket token', () => {
+    expect(lexed(')')).toEqual([[")", '']])
+  })
+
+  it('open brace produces open brace token', () => {
+    expect(lexed('{')).toEqual([['{', '']])
+  })
+
+  it('close brace produces close brace token', () => {
+    expect(lexed('}')).toEqual([['}', '']])
+  })
 })
 
 /*
-from tests.util.asserts import assert_that, equals, fail
-from tests.util.test import test
-from tests.util.system_test import system_test
-from tests.util.all_examples import all_examples
-
-from pycell.lexer import lex
-
-# --- Utils ---
-
-
-def lexed(inp):
-    return list(lex(inp))
-
-# --- Lexing ---
-
-
-@test
-def Empty_file_produces_nothing():
-    assert_that(lexed(""), equals([]))
-
-
-@test
-def Open_bracket_produces_open_bracket_token():
-    assert_that(lexed("("), equals([("(", "")]))
-
-
-@test
-def Close_bracket_produces_close_bracket_token():
-    assert_that(lexed(")"), equals([(")", "")]))
-
-
-@test
-def Open_brace_produces_open_brace_token():
-    assert_that(lexed("{"), equals([("{", "")]))
-
-
-@test
-def Close_brace_produces_close_brace_token():
-    assert_that(lexed("}"), equals([("}", "")]))
-
-
 @test
 def Multiple_brackets_become_multiple_tokens():
     assert_that(
