@@ -81,18 +81,13 @@ describe('lexer', () => {
   it('double quoted values produce string tokens', () => {
     expect(lexed('"dog"')).toEqual([['string', 'dog']])
   })
+
+  it('single quoted values produce string tokens', () => {
+    expect(lexed("'dog'")).toEqual([['string', 'dog']])
+  })
 })
 
 /*
-@test
-def Double_quoted_values_produce_string_tokens():
-    assert_that(lexed('"foo"'), equals([("string", 'foo')]))
-
-
-@test
-def Single_quoted_values_produce_string_tokens():
-    assert_that(lexed("'foo'"), equals([("string", 'foo')]))
-
 
 @test
 def Different_quote_types_allow_the_other_type_inside():
