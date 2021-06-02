@@ -26,6 +26,10 @@ describe('lexer', () => {
   it('close brace produces close brace token', () => {
     expect(lexed('}')).toEqual([['}', '']])
   })
+
+  it('single letter becomes a symbol token', () => {
+    expect(lexed('a')).toEqual([['symbol', 'a']])
+  })
 })
 
 /*
@@ -35,12 +39,6 @@ def Multiple_brackets_become_multiple_tokens():
         lexed("()"),
         equals([("(", ""), (")", "")])
     )
-
-
-@test
-def Single_letter_becomes_a_symbol_token():
-    assert_that(lexed("a"), equals([("symbol", "a")]))
-
 
 @test
 def Multiple_letters_become_a_symbol_token():
