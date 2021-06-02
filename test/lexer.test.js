@@ -33,14 +33,13 @@ describe('lexer', () => {
     expect(lexed('()')).
       toEqual([['(', ''], [')', '']])
   })
+
+  it('multiple letters become a symbol token', () => {
+    expect(lexed('dog')).toEqual([['symbol', 'dog']])
+  })
 })
 
 /*
-@test
-def Multiple_letters_become_a_symbol_token():
-    assert_that(lexed("foo"), equals([("symbol", "foo")]))
-
-
 @test
 def A_symbol_followed_by_a_bracket_becomes_two_tokens():
     assert_that(
