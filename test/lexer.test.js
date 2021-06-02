@@ -50,36 +50,36 @@ describe('lexer', () => {
 
   it('items separated by newlines become separate tokens', () => {
     expect(lexed('dog\ncat\n(\n')).
-    toEqual([['symbol', 'dog'], ['symbol', 'cat'], ['(', '']])
+      toEqual([['symbol', 'dog'], ['symbol', 'cat'], ['(', '']])
   })
 
   it('symbols may contain numbers and underscores', () => {
     expect(lexed('dog2_cat(')).
-    toEqual([['symbol', 'dog2_cat'], ['(', '']])
+      toEqual([['symbol', 'dog2_cat'], ['(', '']])
   })
 
   it('symbols may start with underscores', () => {
     expect(lexed('_dog2_cat(')).
-    toEqual([['symbol', '_dog2_cat'], ['(', '']])
+      toEqual([['symbol', '_dog2_cat'], ['(', '']])
+  })
+
+  it('integers produce into number tokens', () => {
+    expect(lexed('128')).
+      toEqual([['number', '128']])
+  })
+
+  it('floating points produce number tokens', () => {
+    expect(lexed('12.8')).
+      toEqual([['number', '12.8']])
+  })
+
+  it('leading decimal point produces number tokens', () => {
+    expect(lexed('.128')).
+      toEqual([['number', '.128']])
   })
 })
 
 /*
-@test
-def Integers_are_parsed_into_number_tokens():
-    assert_that(lexed("128"), equals([("number", "128")]))
-
-
-@test
-def Floating_points_are_parsed_into_number_tokens():
-    assert_that(lexed("12.8"), equals([("number", "12.8")]))
-
-
-@test
-def Leading_decimal_point_produces_number_token():
-    assert_that(lexed(".812"), equals([("number", ".812")]))
-
-
 @test
 def Double_quoted_values_produce_string_tokens():
     assert_that(lexed('"foo"'), equals([("string", 'foo')]))
