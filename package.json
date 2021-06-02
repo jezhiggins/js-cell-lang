@@ -1,0 +1,28 @@
+{
+  "name": "jscell",
+  "version": "1.0.0",
+  "description": "Cell, a programming language designed to have a minimally small implementation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jezhiggins/jscell.git"
+  },
+  "author": "Jez Higgins, JezUK Ltd",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jezhiggins/jscell/issues"
+  },
+  "homepage": "https://github.com/jezhiggins/jscell#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.14.4",
+    "jest": "^27.0.3"
+  }
+}
