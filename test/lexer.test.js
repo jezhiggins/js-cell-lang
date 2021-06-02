@@ -85,30 +85,23 @@ describe('lexer', () => {
   it('single quoted values produce string tokens', () => {
     expect(lexed("'dog'")).toEqual([['string', 'dog']])
   })
+
+  it('different quote types allow the other type inside', () => {
+    expect(lexed("'f\"oo'")).toEqual([['string', 'f"oo']])
+    expect(lexed('"f\'oo"')).toEqual([['string', "f'oo"]])
+  })
+
+  it('empty quotes produce an empty string token', () => {
+    expect(lexed('""')).toEqual([['string', '']])
+  })
+
+  it('an unfinished string is an error', () => {
+    expect(() => lexed('"foo')).
+      toThrow("A string ran off the end of the program.")
+  })
 })
 
 /*
-
-@test
-def Different_quote_types_allow_the_other_type_inside():
-    assert_that(lexed("'f\"oo'"), equals([("string", 'f"oo')]))
-    assert_that(lexed('"f\'oo"'), equals([("string", "f'oo")]))
-
-
-@test
-def Empty_quotes_produce_an_empty_string_token():
-    assert_that(lexed('""'), equals([("string", '')]))
-
-
-@test
-def An_unfinished_string_is_an_error():
-    try:
-        lexed('"foo')
-        fail("Should throw")
-    except Exception as e:
-        assert_that(str(e), equals("A string ran off the end of the program."))
-
-
 @test
 def Commas_produce_comma_tokens():
     assert_that(lexed(","), equals([(",", "")]))
