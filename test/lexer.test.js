@@ -42,63 +42,29 @@ describe('lexer', () => {
     expect(lexed('dog(')).
       toEqual([['symbol', 'dog'], ['(', '']])
   })
+
+  it('items separated by spaces become separate tokens', () => {
+    expect(lexed('dog cat ( ')).
+      toEqual([['symbol', 'dog'], ['symbol', 'cat'], ['(', '']])
+  })
+
+  it('items separated by newlines become separate tokens', () => {
+    expect(lexed('dog\ncat\n(\n')).
+    toEqual([['symbol', 'dog'], ['symbol', 'cat'], ['(', '']])
+  })
+
+  it('symbols may contain numbers and underscores', () => {
+    expect(lexed('dog2_cat(')).
+    toEqual([['symbol', 'dog2_cat'], ['(', '']])
+  })
+
+  it('symbols may start with underscores', () => {
+    expect(lexed('_dog2_cat(')).
+    toEqual([['symbol', '_dog2_cat'], ['(', '']])
+  })
 })
 
 /*
-
-@test
-def Items_separated_by_spaces_become_separate_tokens():
-    assert_that(
-        lexed("foo bar ( "),
-        equals(
-            [
-                ("symbol", "foo"),
-                ("symbol", "bar"),
-                ("(", "")
-            ]
-        )
-    )
-
-
-@test
-def Items_separated_by_newlines_become_separate_tokens():
-    assert_that(
-        lexed("foo\nbar"),
-        equals(
-            [
-                ("symbol", "foo"),
-                ("symbol", "bar")
-            ]
-        )
-    )
-
-
-@test
-def Symbols_may_contain_numbers_and_underscores():
-    assert_that(
-        lexed("foo2_bar ( "),
-        equals(
-            [
-                ("symbol", "foo2_bar"),
-                ("(", "")
-            ]
-        )
-    )
-
-
-@test
-def Symbols_may_start_with_underscores():
-    assert_that(
-        lexed("_foo2_bar ( "),
-        equals(
-            [
-                ("symbol", "_foo2_bar"),
-                ("(", "")
-            ]
-        )
-    )
-
-
 @test
 def Integers_are_parsed_into_number_tokens():
     assert_that(lexed("128"), equals([("number", "128")]))
