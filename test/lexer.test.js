@@ -117,16 +117,17 @@ describe('lexer', () => {
   it('colons produce colon tokens', () => {
     expectLexed(':').toEqual([':', ''])
   })
+
+  it('arithmetic operators produce operation tokens', () => {
+    expectLexed("+").toEqual(["operation", "+"])
+    expectLexed("-").toEqual(["operation", "-"])
+    expectLexed("*").toEqual(["operation", "*"])
+    expectLexed("/").toEqual(["operation", "/"])
+  })
 })
 
-/*@test
-def Arithmetic_operators_produce_operation_tokens():
-    assert_that(lexed("+"), equals([("operation", "+")]))
-    assert_that(lexed("-"), equals([("operation", "-")]))
-    assert_that(lexed("*"), equals([("operation", "*")]))
-    assert_that(lexed("/"), equals([("operation", "/")]))
 
-
+/*
 @test
 def Multiple_token_types_can_be_combined():
     assert_that(
