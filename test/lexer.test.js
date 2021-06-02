@@ -6,7 +6,7 @@ function lexed(input) {
 
 function expectLexed(input) {
   const result = lexed(input)
-  return expect(result)
+  return expect(result.length == 1 ? result[0] : result)
 }
 
 describe('lexer', () => {
@@ -15,23 +15,23 @@ describe('lexer', () => {
   })
 
   it('open bracket produces open bracket token', () => {
-    expectLexed('(').toEqual([["(", '']])
+    expectLexed('(').toEqual(["(", ''])
   })
 
   it('close bracket produces close bracket token', () => {
-    expectLexed(')').toEqual([[")", '']])
+    expectLexed(')').toEqual([")", ''])
   })
 
   it('open brace produces open brace token', () => {
-    expectLexed('{').toEqual([['{', '']])
+    expectLexed('{').toEqual(['{', ''])
   })
 
   it('close brace produces close brace token', () => {
-    expectLexed('}').toEqual([['}', '']])
+    expectLexed('}').toEqual(['}', ''])
   })
 
   it('single letter becomes a symbol token', () => {
-    expectLexed('a').toEqual([['symbol', 'a']])
+    expectLexed('a').toEqual(['symbol', 'a'])
   })
 
   it('multiple brackets become multiple tokens', () => {
@@ -40,7 +40,7 @@ describe('lexer', () => {
   })
 
   it('multiple letters become a symbol token', () => {
-    expectLexed('dog').toEqual([['symbol', 'dog']])
+    expectLexed('dog').toEqual(['symbol', 'dog'])
   })
 
   it('a symbol followed by a bracket becomes two tokens', () => {
@@ -69,35 +69,32 @@ describe('lexer', () => {
   })
 
   it('integers produce into number tokens', () => {
-    expectLexed('128').
-      toEqual([['number', '128']])
+    expectLexed('128').toEqual(['number', '128'])
   })
 
   it('floating points produce number tokens', () => {
-    expectLexed('12.8').
-      toEqual([['number', '12.8']])
+    expectLexed('12.8').toEqual(['number', '12.8'])
   })
 
   it('leading decimal point produces number tokens', () => {
-    expectLexed('.128').
-      toEqual([['number', '.128']])
+    expectLexed('.128').toEqual(['number', '.128'])
   })
 
   it('double quoted values produce string tokens', () => {
-    expectLexed('"dog"').toEqual([['string', 'dog']])
+    expectLexed('"dog"').toEqual(['string', 'dog'])
   })
 
   it('single quoted values produce string tokens', () => {
-    expectLexed("'dog'").toEqual([['string', 'dog']])
+    expectLexed("'dog'").toEqual(['string', 'dog'])
   })
 
   it('different quote types allow the other type inside', () => {
-    expectLexed("'f\"oo'").toEqual([['string', 'f"oo']])
-    expectLexed('"f\'oo"').toEqual([['string', "f'oo"]])
+    expectLexed("'f\"oo'").toEqual(['string', 'f"oo'])
+    expectLexed('"f\'oo"').toEqual(['string', "f'oo"])
   })
 
   it('empty quotes produce an empty string token', () => {
-    expectLexed('""').toEqual([['string', '']])
+    expectLexed('""').toEqual(['string', ''])
   })
 
   it('an unfinished string is an error', () => {
