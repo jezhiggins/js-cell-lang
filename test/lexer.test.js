@@ -134,58 +134,49 @@ describe('lexer', () => {
     expect(() => lexed('!')).
       toThrow('Unrecognised character - !')
   })
+
+  it('multiple token types can be combined', () => {
+    expectLexed('frobnicate( "Hello " + name, 4 / 5.0);').
+      toEqual([
+        ["symbol", "frobnicate"],
+        ["(", ""],
+        ["string", "Hello "],
+        ["operation", "+"],
+        ["symbol", "name"],
+        [",", ""],
+        ["number", "4"],
+        ["operation", "/"],
+        ["number", "5.0"],
+        [")", ""],
+        [";", ""]
+      ])
+  })
+
+  it('a complex program lexes', () => {
+    const example =
+`
+  double =
+    {:(x)
+      2 * x;
+    };
+
+  num1 = 3;
+  num2 = double( num );
+
+  answer =
+    if( greater_than( num2, 5 ),
+      {"LARGE!"},
+      {"small."}
+    );
+
+  print( answer );
+`
+    expectLexed(example).toHaveLength(49)
+  })
 })
 
-
 /*
-@test
-def Multiple_token_types_can_be_combined():
-    assert_that(
-        lexed('frobnicate( "Hello" + name, 4 / 5.0);'),
-        equals(
-            [
-                ("symbol", "frobnicate"),
-                ("(", ""),
-                ("string", "Hello"),
-                ("operation", "+"),
-                ("symbol", "name"),
-                (",", ""),
-                ("number", "4"),
-                ("operation", "/"),
-                ("number", "5.0"),
-                (")", ""),
-                (";", "")
-            ]
-        )
-    )
-
-
-@test
-def A_complex_example_program_lexes():
-    example = """
-        double =
-            {:(x)
-                2 * x;
-            };
-
-        num1 = 3;
-        num2 = double( num );
-
-        answer =
-            if( greater_than( num2, 5 ),
-                {"LARGE!"},
-                {"small."}
-            );
-
-        print( answer );
-    """
-    lexed(example)
-
-
-
 # --- Example programs ---
-
-
 @system_test
 def All_examples_lex():
     from pycell.chars_in_file import chars_in_file
