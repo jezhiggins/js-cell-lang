@@ -127,7 +127,12 @@ describe('lexer', () => {
 
   it('tabs are an error', () => {
     expect(() => lexed('aaa\tbbb')).
-    toThrow("Tab characters are not allowed in Cell.")
+      toThrow("Tab characters are not allowed in Cell.")
+  })
+
+  it('other characters are an error', () => {
+    expect(() => lexed('!')).
+      toThrow('Unrecognised character - !')
   })
 })
 
