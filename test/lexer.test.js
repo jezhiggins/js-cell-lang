@@ -124,6 +124,11 @@ describe('lexer', () => {
     expectLexed("*").toEqual(["operation", "*"])
     expectLexed("/").toEqual(["operation", "/"])
   })
+
+  it('tabs are an error', () => {
+    expect(() => lexed('aaa\tbbb')).
+    toThrow("Tab characters are not allowed in Cell.")
+  })
 })
 
 
@@ -171,14 +176,6 @@ def A_complex_example_program_lexes():
     """
     lexed(example)
 
-
-@test
-def Tabs_are_an_error():
-    try:
-        lexed("aaa\tbbb")
-        fail("Should throw")
-    except Exception as e:
-        assert_that(str(e), equals("Tab characters are not allowed in Cell."))
 
 
 # --- Example programs ---
