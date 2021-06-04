@@ -25,18 +25,18 @@ describe('parser', () => {
       toThrow('Hit end of file - expected \';\'.')
   })
 
-  xit('sum of numbers is parsed as expression', () => {
+  it('sum of numbers is parsed as expression', () => {
     expectParsed('32 + 44;')
-      .toEqual(['operation', '+', ['number', '32'], ['number', '']])
+      .toEqual(['operation', '+', ['number', '32'], ['number', '44']])
   })
 
-  xit('difference of symbol and number is parsed as expression', () => {
+  it('difference of symbol and number is parsed as expression', () => {
     expectParsed('foo - 44;')
       .toEqual(['operation', '-', ['symbol', 'foo'], ['number', '44']])
   })
 
-  xit('multiplication of symbol is parsed as expression', () => {
-    expectParsed('foo * bar')
+  it('multiplication of symbol and symbol is parsed as expression', () => {
+    expectParsed('foo * bar;')
       .toEqual(['operation', '*', ['symbol', 'foo'], ['symbol', 'bar']])
   })
 
