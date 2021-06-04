@@ -9,6 +9,10 @@ describe('parser', () => {
   it('empty file produces nothing', () => {
     expect(parsed('')).toEqual([])
   })
+
+  it('number is parsed as expression', () => {
+    expect(parsed('56;')).toEqual([['number', '56']])
+  })
 })
 
 /*
