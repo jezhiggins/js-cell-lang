@@ -1,4 +1,5 @@
 import { peekableStream } from '../lib/peekable-stream.js'
+import { lex } from '../lib/lexer.js'
 
 describe('peekable stream', () => {
   it('empty string returns nothing', () => {
@@ -30,5 +31,33 @@ describe('peekable stream', () => {
     expect(stream.peek()).toEqual({ done: false, value: 't' })
     expect(stream.next()).toEqual({ done: false, value: 't' })
     expect(stream.peek()).toEqual({ done: true })
+  })
+
+  it('can peek the lexed token stream', () => {
+    const tokens = peekableStream(lex('12 + 12'))
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: false, value: ['operation', '+']})
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: true })
+  })
+
+  it('can peek the lexed token stream', () => {
+    const tokens = peekableStream(lex('12 + 12'))
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: false, value: ['operation', '+']})
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: true })
+  })
+
+  it('can peek an array', () => {
+    const n = peekableStream([1,2,3])
+    expect(n.peek()).toEqual({ done: false, value: 1 })
+    expect(n.next()).toEqual({ done: false, value: 1 })
+    expect(n.peek()).toEqual({ done: false, value: 2 })
+    expect(n.next()).toEqual({ done: false, value: 2 })
+    expect(n.peek()).toEqual({ done: false, value: 3 })
+    expect(n.next()).toEqual({ done: false, value: 3 })
+    expect(n.peek()).toEqual({ done: true })
+    expect(n.next()).toEqual({ done: true })
   })
 })
