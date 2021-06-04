@@ -5,79 +5,48 @@ function parsed(input) {
   return [...parse(lex(input))]
 }
 
+function expectParsed(input) {
+  const result = parsed(input)
+  return expect(result.length == 1 ? result[0] : result)
+}
+
+
 describe('parser', () => {
   it('empty file produces nothing', () => {
-    expect(parsed('')).toEqual([])
+    expectParsed('').toEqual([])
   })
 
   it('number is parsed as expression', () => {
-    expect(parsed('56;')).toEqual([['number', '56']])
+    expectParsed('56;').toEqual(['number', '56'])
+  })
+
+  it('missing semicolon is an error', () => {
+    expect(() => parsed('56')).
+      toThrow('Hit end of file - expected \';\'.')
+  })
+
+  xit('sum of numbers is parsed as expression', () => {
+    expectParsed('32 + 44;')
+      .toEqual(['operation', '+', ['number', '32'], ['number', '']])
+  })
+
+  xit('difference of symbol and number is parsed as expression', () => {
+    expectParsed('foo - 44;')
+      .toEqual(['operation', '-', ['symbol', 'foo'], ['number', '44']])
+  })
+
+  xit('multiplication of symbol is parsed as expression', () => {
+    expectParsed('foo * bar')
+      .toEqual(['operation', '*', ['symbol', 'foo'], ['symbol', 'bar']])
+  })
+
+  xit('variable assignment gets parsed', () => {
+    expectParsed('x = 3;')
+      .toEqual(['assignment', ["symbol", "x"], ["number", "3"]])
   })
 })
 
 /*
-@test
-def Number_is_parsed_as_expression():
-    assert_that(parsed("56;"), equals([("number", "56")]))
-
-
-@test
-def Missing_semicolon_is_an_error():
-    try:
-        parsed("56")
-        fail("Should throw")
-    except Exception as e:
-        assert_that(str(e), equals("Hit end of file - expected ';'."))
-
-
-@test
-def Sum_of_numbers_is_parsed_as_expression():
-    assert_that(
-        parsed("32 + 44;"),
-        equals(
-            [
-                ("operation", "+", ("number", "32"), ("number", "44"))
-            ]
-        )
-    )
-
-
-@test
-def Difference_of_symbol_and_number_is_parsed_as_expression():
-    assert_that(
-        parsed("foo - 44;"),
-        equals(
-            [
-                ("operation", "-", ("symbol", "foo"), ("number", "44"))
-            ]
-        )
-    )
-
-
-@test
-def Multiplication_of_symbols_is_parsed_as_expression():
-    assert_that(
-        parsed("foo * bar;"),
-        equals(
-            [
-                ("operation", "*", ("symbol", "foo"), ("symbol", "bar"))
-            ]
-        )
-    )
-
-
-@test
-def Variable_assignment_gets_parsed():
-    assert_that(
-        parsed("x = 3;"),
-        equals(
-            [
-                ("assignment", ("symbol", "x"), ("number", "3"))
-            ]
-        )
-    )
-
-
 @test
 def Function_call_with_no_args_gets_parsed():
     assert_that(
