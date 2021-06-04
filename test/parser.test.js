@@ -40,9 +40,14 @@ describe('parser', () => {
       .toEqual(['operation', '*', ['symbol', 'foo'], ['symbol', 'bar']])
   })
 
-  xit('variable assignment gets parsed', () => {
+  it('variable assignment gets parsed', () => {
     expectParsed('x = 3;')
       .toEqual(['assignment', ["symbol", "x"], ["number", "3"]])
+  })
+
+  it('assigned to a number is an error', () => {
+    expect(() => parsed('3 = x;')).
+      toThrow('You can\'t assign to anything except a symbol.')
   })
 })
 
@@ -124,18 +129,6 @@ def Multiple_function_calls_with_various_args_get_parsed():
             ]
         )
     )
-
-
-@test
-def Assigning_to_a_number_is_an_error():
-    try:
-        parsed("3 = x;")
-        fail("Should throw")
-    except Exception as e:
-        assert_that(
-            str(e),
-            equals("You can't assign to anything except a symbol.")
-        )
 
 
 @test
