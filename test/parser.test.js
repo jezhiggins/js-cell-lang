@@ -10,7 +10,6 @@ function expectParsed(input) {
   return expect(result.length == 1 ? result[0] : result)
 }
 
-
 describe('parser', () => {
   it('empty file produces nothing', () => {
     expectParsed('').toEqual([])
@@ -49,21 +48,14 @@ describe('parser', () => {
     expect(() => parsed('3 = x;')).
       toThrow('You can\'t assign to anything except a symbol.')
   })
+
+  it('function call with no args gets parsed', () => {
+    expectParsed('print();')
+      .toEqual(['call', ['symbol', 'print'], []])
+  })
 })
 
 /*
-@test
-def Function_call_with_no_args_gets_parsed():
-    assert_that(
-        parsed("print();"),
-        equals(
-            [
-                ("call", ("symbol", "print"), [])
-            ]
-        )
-    )
-
-
 @test
 def Function_call_with_various_args_gets_parsed():
     assert_that(
