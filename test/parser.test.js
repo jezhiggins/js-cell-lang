@@ -19,6 +19,10 @@ describe('parser', () => {
     expectParsed('56;').toEqual(['number', '56'])
   })
 
+  it('string is parsed as expression', () => {
+    expectParsed('"bobble";').toEqual(['string', 'bobble'])
+  })
+
   it('missing semicolon is an error', () => {
     expect(() => parsed('56')).
       toThrow('Hit end of file - expected \';\'.')
@@ -53,41 +57,41 @@ describe('parser', () => {
     expectParsed('print();')
       .toEqual(['call', ['symbol', 'print'], []])
   })
+
+  it('multiple functions call no args get parsed', () => {
+    expectParsed('print()();')
+      .toEqual(['call', ['call', ['symbol', 'print'], []], [] ])
+  })
+
+  it('function call with one args gets parsed', () => {
+    expectParsed('print( "a" );')
+      .toEqual([
+        ['call',
+          ['symbol', 'print'],
+          [
+            ['string', 'a']
+          ]
+        ]
+      ])
+  })
+
+  it('function call with various args gets parsed', () => {
+    expectParsed('print( "a", 3, 4 / 12 );')
+      .toEqual([
+        ['call',
+          ['symbol', 'print'],
+          [
+            ['string', 'a'],
+            ['number', '3'],
+            ['operation', '/', ['number', '4'], ['number', '12']]
+          ]
+        ]
+      ])
+  })
+
 })
 
 /*
-@test
-def Function_call_with_various_args_gets_parsed():
-    assert_that(
-        parsed("print( 'a', 3, 4 / 12 );"),
-        equals(
-            [
-                (
-                    "call",
-                    ("symbol", "print"),
-                    [
-                        ("string", "a"),
-                        ("number", "3"),
-                        ("operation", "/", ("number", "4"), ("number", "12"))
-                    ]
-                )
-            ]
-        )
-    )
-
-
-@test
-def Multiple_function_calls_with_no_args_get_parsed():
-    assert_that(
-        parsed("print()();"),
-        equals(
-            [
-                ("call", ("call", ("symbol", "print"), []), [])
-            ]
-        )
-    )
-
-
 @test
 def Multiple_function_calls_with_various_args_get_parsed():
     assert_that(
