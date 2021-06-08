@@ -7,7 +7,7 @@ function parsed(input) {
 
 function expectParsed(input) {
   const result = parsed(input)
-  return expect(result.length == 1 ? result[0] : result)
+  return expect(result.length === 1 ? result[0] : result)
 }
 
 describe('parser', () => {
@@ -48,10 +48,16 @@ describe('parser', () => {
       .toEqual(['assignment', ["symbol", "x"], ["number", "3"]])
   })
 
-  it('assigned to a number is an error', () => {
-    expect(() => parsed('3 = x;')).
-      toThrow('You can\'t assign to anything except a symbol.')
+  it('assigning to a number is an error', () => {
+    expect(() => parsed('3 = x;'))
+      .toThrow('You can\'t assign to anything except a symbol.')
   })
+
+  it('assigning to an expression is an error', () => {
+    expect(() => parsed("x(4) = 5;"))
+      .toThrow('You can\'t assign to anything except a symbol.')
+  })
+
 
   it('function call with no args gets parsed', () => {
     expectParsed('print();')
@@ -65,19 +71,19 @@ describe('parser', () => {
 
   it('function call with one args gets parsed', () => {
     expectParsed('print( "a" );')
-      .toEqual([
+      .toEqual(
         ['call',
           ['symbol', 'print'],
           [
             ['string', 'a']
           ]
         ]
-      ])
+      )
   })
 
   it('function call with various args gets parsed', () => {
     expectParsed('print( "a", 3, 4 / 12 );')
-      .toEqual([
+      .toEqual(
         ['call',
           ['symbol', 'print'],
           [
@@ -86,59 +92,32 @@ describe('parser', () => {
             ['operation', '/', ['number', '4'], ['number', '12']]
           ]
         ]
-      ])
+      )
+  })
+
+  it('multiple function calls with various args gets parsed', () => {
+    expectParsed('print("a", 3, 4 / 12)(512)();')
+      .toEqual(
+        ['call',
+          ['call',
+            ['call',
+              ['symbol', 'print'],
+              [
+                ['string', 'a'],
+                ['number', '3'],
+                ['operation', '/', ['number', '4'], ['number', '12']]
+              ]
+            ],
+            ['number', '512']
+          ],
+          []
+        ]
+      )
   })
 
 })
 
 /*
-@test
-def Multiple_function_calls_with_various_args_get_parsed():
-    assert_that(
-        parsed("print( 'a', 3, 4 / 12 )(512)();"),
-        equals(
-            [
-                (
-                    "call",
-                    (
-                        "call",
-                        (
-                            "call",
-                            ("symbol", "print"),
-                            [
-                                ("string", "a"),
-                                ("number", "3"),
-                                (
-                                    "operation",
-                                    "/",
-                                    ("number", "4"),
-                                    ("number", "12")
-                                )
-                            ]
-                        ),
-                        [
-                            ("number", "512")
-                        ]
-                    ),
-                    []
-                )
-            ]
-        )
-    )
-
-
-@test
-def Assigning_to_an_expression_is_an_error():
-    try:
-        parsed("x(4) = 5;")
-        fail("Should throw")
-    except Exception as e:
-        assert_that(
-            str(e),
-            equals("You can't assign to anything except a symbol.")
-        )
-
-
 @test
 def Empty_function_definition_gets_parsed():
     assert_that(
