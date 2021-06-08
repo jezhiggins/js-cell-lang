@@ -108,28 +108,37 @@ describe('parser', () => {
                 ['operation', '/', ['number', '4'], ['number', '12']]
               ]
             ],
-            ['number', '512']
+            [
+              ['number', '512']
+            ]
           ],
           []
         ]
       )
   })
 
+  it('empty function definition gets parsed', () => {
+    expectParsed('{};')
+      .toEqual(['function', [], []])
+  })
+
+  it('empty function definition with params gets parsed', () => {
+    expectParsed('{:(aa, bb, cc, dd)};')
+      .toEqual(
+        ['function',
+          [
+            ['symbol', 'aa'],
+            ['symbol', 'bb'],
+            ['symbol', 'cc'],
+            ['symbol', 'dd']
+          ],
+          []
+        ]
+      )
+  })
 })
 
 /*
-@test
-def Empty_function_definition_gets_parsed():
-    assert_that(
-        parsed("{};"),
-        equals(
-            [
-                ("function", [], [])
-            ]
-        )
-    )
-
-
 @test
 def Missing_param_definition_with_colon_is_an_error():
     try:
@@ -166,27 +175,6 @@ def Multiple_commands_parse_into_multiple_expressions():
                     )
                 ),
                 ("call", ("symbol", 'func'), [("symbol", 'x')])
-            ]
-        )
-    )
-
-
-@test
-def Empty_function_definition_with_params_gets_parsed():
-    assert_that(
-        parsed("{:(aa, bb, cc, dd)};"),
-        equals(
-            [
-                (
-                    "function",
-                    [
-                        ("symbol", "aa"),
-                        ("symbol", "bb"),
-                        ("symbol", "cc"),
-                        ("symbol", "dd")
-                    ],
-                    []
-                )
             ]
         )
     )
