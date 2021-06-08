@@ -45,7 +45,7 @@ describe('parser', () => {
 
   it('variable assignment gets parsed', () => {
     expectParsed('x = 3;')
-      .toEqual(['assignment', ["symbol", "x"], ["number", "3"]])
+      .toEqual(['assignment', ['symbol', 'x'], ['number', '3']])
   })
 
   it('assigning to a number is an error', () => {
@@ -54,7 +54,7 @@ describe('parser', () => {
   })
 
   it('assigning to an expression is an error', () => {
-    expect(() => parsed("x(4) = 5;"))
+    expect(() => parsed('x(4) = 5;'))
       .toThrow('You can\'t assign to anything except a symbol.')
   })
 
@@ -140,38 +140,76 @@ describe('parser', () => {
     expect(() => parsed('{:print(x););'))
       .toThrow('\':\' must be followed by \'(\' in a function.')
   })
+
+  it('multiple commands parse into multiple expressions', () => {
+    const program = `
+      x = 3;
+      func = {:(a) print(a);};
+      func(x);
+    `
+    expectParsed(program)
+      .toEqual([
+        ['assignment', ['symbol', 'x'], ['number', '3']],
+        ['assignment', ['symbol', 'func'],
+          ['function',
+            [
+              ['symbol', 'a']
+            ],
+            [
+              ['call', ['symbol', 'print'], [['symbol', 'a']]]
+            ]
+          ]
+        ],
+        ['call', ['symbol', 'func'], [['symbol', 'x']]]
+      ])
+  })
+
+  it('function definition containing commands gets parsed', () => {
+    expectParsed('{print(3-4); a = "x"; print(a);};')
+      .toEqual([
+          'function',
+          [],
+          [
+            ['call',
+              ['symbol', 'print'],
+              [
+                ['operation', '-',
+                  ['number', '3'],
+                  ['number', '4']
+                ]
+              ]
+            ],
+            ['assignment', ['symbol', 'a'], ['string', 'x']],
+            ['call', ['symbol', 'print'], [['symbol', 'a']]]
+          ]
+        ]
+      )
+  })
+
+  it('function definition with params and commands gets parsed', () => {
+    expectParsed('{:(x,yy)print(3-4); a = "x"; print(a);};')
+      .toEqual(
+        ['function',
+          [
+            ['symbol', 'x'],
+            ['symbol', 'yy']
+          ],
+          [
+            ['call',
+              ['symbol', 'print'],
+              [
+                ['operation', '-', ['number', '3'], ['number', '4']]
+              ],
+            ],
+            ['assignment', ['symbol', 'a'], ['string', 'x']],
+            ['call', ['symbol', 'print'], [['symbol', 'a']]]
+          ]
+        ]
+      )
+  })
 })
 
 /*
-@test
-def Multiple_commands_parse_into_multiple_expressions():
-    program = """
-    x = 3;
-    func = {:(a) print(a);};
-    func(x);
-    """
-    assert_that(
-        parsed(program),
-        equals(
-            [
-                ("assignment", ("symbol", 'x'), ("number", '3')),
-                (
-                    "assignment",
-                    ("symbol", 'func'),
-                    (
-                        "function",
-                        [("symbol", 'a')],
-                        [
-                            ("call", ("symbol", 'print'), [("symbol", 'a')])
-                        ]
-                    )
-                ),
-                ("call", ("symbol", 'func'), [("symbol", 'x')])
-            ]
-        )
-    )
-
-
 @test
 def Function_params_that_are_not_symbols_is_an_error():
     try:
@@ -186,72 +224,6 @@ def Function_params_that_are_not_symbols_is_an_error():
                 + "('operation', '+', ('symbol', 'aa'), ('number', '3'))."
             )
         )
-
-
-@test
-def Function_definition_containing_commands_gets_parsed():
-    assert_that(
-        parsed('{print(3-4); a = "x"; print(a);};'),
-        equals(
-            [
-                (
-                    "function",
-                    [],
-                    [
-                        (
-                            "call",
-                            ("symbol", 'print'),
-                            [
-                                (
-                                    "operation",
-                                    '-',
-                                    ("number", '3'),
-                                    ("number", '4')
-                                )
-                            ]
-                        ),
-                        ("assignment", ("symbol", 'a'), ("string", 'x')),
-                        ("call", ("symbol", 'print'), [("symbol", 'a')])
-                    ]
-                )
-            ]
-        )
-    )
-
-
-@test
-def Function_definition_with_params_and_commands_gets_parsed():
-    assert_that(
-        parsed('{:(x,yy)print(3-4); a = "x"; print(a);};'),
-        equals(
-            [
-                (
-                    "function",
-                    [
-                        ("symbol", "x"),
-                        ("symbol", "yy")
-                    ],
-                    [
-                        (
-                            "call",
-                            ("symbol", 'print'),
-                            [
-                                (
-                                    "operation",
-                                    '-',
-                                    ("number", '3'),
-                                    ("number", '4')
-                                )
-                            ]
-                        ),
-                        ("assignment", ("symbol", 'a'), ("string", 'x')),
-                        ("call", ("symbol", 'print'), [("symbol", 'a')])
-                    ]
-                )
-            ]
-        )
-    )
-
 
 @test
 def A_complex_example_program_parses():
