@@ -58,7 +58,6 @@ describe('parser', () => {
       .toThrow('You can\'t assign to anything except a symbol.')
   })
 
-
   it('function call with no args gets parsed', () => {
     expectParsed('print();')
       .toEqual(['call', ['symbol', 'print'], []])
@@ -136,21 +135,14 @@ describe('parser', () => {
         ]
       )
   })
+
+  it('missing param definition with colon is an error', () => {
+    expect(() => parsed('{:print(x););'))
+      .toThrow('\':\' must be followed by \'(\' in a function.')
+  })
 })
 
 /*
-@test
-def Missing_param_definition_with_colon_is_an_error():
-    try:
-        parsed("{:print(x););")
-        fail("Should throw")
-    except Exception as e:
-        assert_that(
-            str(e),
-            equals("':' must be followed by '(' in a function.")
-        )
-
-
 @test
 def Multiple_commands_parse_into_multiple_expressions():
     program = """
