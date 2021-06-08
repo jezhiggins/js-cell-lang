@@ -207,24 +207,44 @@ describe('parser', () => {
         ]
       )
   })
+
+  it('function params that are not symbol is an error', () => {
+    expect(() => parsed('{:(aa + 3, d)};'))
+      .toThrow('Only symbols are allowed in function parameter lists. '
+        + 'I found: '
+        + '(\'operation\', \'+\', (\'symbol\', \'aa\'), (\'number\', \'3\')).'
+      )
+  })
+
+  it('a complex example program parses', () => {
+    const example = `
+      double =
+        {:(x)
+        2 * x;
+        };
+
+      num1 = 3;
+      num2 = double( num );
+
+      answer =
+      if( greater_than( num2, 5 ),
+        {"LARGE!"},
+        {"small."}
+      );
+
+      print( answer );
+    `
+    const lexer = lex(example)
+    const parser = parse(lexer)
+
+    const ast = [...parser]
+
+    expect(lexer.next().done === true)
+    expect(ast).toHaveLength(5)
+  })
 })
 
 /*
-@test
-def Function_params_that_are_not_symbols_is_an_error():
-    try:
-        parsed("{:(aa + 3, d)};"),
-        fail("Should throw")
-    except Exception as e:
-        assert_that(
-            str(e),
-            equals(
-                "Only symbols are allowed in function parameter lists. "
-                + "I found: "
-                + "('operation', '+', ('symbol', 'aa'), ('number', '3'))."
-            )
-        )
-
 @test
 def A_complex_example_program_parses():
     example = """
