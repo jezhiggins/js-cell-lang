@@ -48,20 +48,16 @@ describe('evaluator', () => {
   it('calling a function returns its lat value', () => {
     expectEval('{ 10; 11; }();').toEqual(['number', 11])
   })
+
+  it('body of a function can use arg values', () => {
+    expectEval('{:(x, y) x + y;}(100, 1);').toEqual(['number', 101])
+  })
 })
 
 /*
 @test
 def None_evaluates_to_None():
     assert_that(eval_expr(("none",), Env()), equals(("none", )))
-
-@test
-def Body_of_a_function_can_use_arg_values():
-    assert_that(
-        evald("{:(x, y) x + y;}(100, 1);"),
-        equals(("number", 101))
-    )
-
 
 @test
 def Can_hold_a_reference_to_a_function_and_call_it():
