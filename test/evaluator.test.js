@@ -44,21 +44,16 @@ describe('evaluator', () => {
   it('value of an assignment is the value assigned', () => {
     expectEval('x = 31;').toEqual(["number", 31])
   })
+
+  it('calling a function returns its lat value', () => {
+    expectEval('{ 10; 11; }();').toEqual(['number', 11])
+  })
 })
 
 /*
 @test
 def None_evaluates_to_None():
     assert_that(eval_expr(("none",), Env()), equals(("none", )))
-
-
-@test
-def Calling_a_function_returns_its_last_value():
-    assert_that(
-        evald("{10;11;}();"),
-        equals(("number", 11))
-    )
-
 
 @test
 def Body_of_a_function_can_use_arg_values():

@@ -242,34 +242,37 @@ describe('parser', () => {
     expect(lexer.next().done === true)
     expect(ast).toHaveLength(5)
   })
+
+  it('parse an anonymous function', () => {
+    expectParsed('{10; 11;};')
+      .toEqual([
+        'function',
+        [],
+        [
+          ['number', '10'],
+          ['number', '11']
+        ]
+      ])
+  })
+
+  it('parse an immediately invoked anonymous function', () => {
+    expectParsed('{10; 11;}();')
+      .toEqual([
+        "call",
+          [
+            'function',
+            [],
+            [
+              ['number', '10'],
+              ['number', '11']
+            ]
+          ],
+          []
+        ])
+  })
 })
 
 /*
-@test
-def A_complex_example_program_parses():
-    example = """
-        double =
-            {:(x)
-                2 * x;
-            };
-
-        num1 = 3;
-        num2 = double( num );
-
-        answer =
-            if( greater_than( num2, 5 ),
-                {"LARGE!"},
-                {"small."}
-            );
-
-        print( answer );
-    """
-    parsed(example)
-
-
-# --- Example programs ---
-
-
 @system_test
 def All_examples_parse():
     from pycell.chars_in_file import chars_in_file
