@@ -31,7 +31,6 @@ num1 does not equal num2.
 ## Install
 
 ```
-sudo apt-get install python3
 git clone https://gitlab.com/jezhiggins/jscell.git
 cd jscell
 npm install
@@ -39,6 +38,16 @@ npm install
 ./cell filename.cell    # - to run a program
 npm run test            # - to run all the tests
 ```
+
+## Work in Progress
+
+This repository is work in progress
+
+- [x] Lexer
+- [x] Parser
+- [ ] Compiler
+- [ ] Evaluator
+- [ ] Library
 
 ## See also
 
