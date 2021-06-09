@@ -3,7 +3,11 @@ import { parse } from '../lib/parser.js'
 import { evaluate } from '../lib/evaluator.js'
 
 function expectEval(input) {
-  return expect(evaluate(parse(lex(input)).next().value))
+  return expect(evaluate(parse(lex(input))))
+}
+
+function expectEvalToThrow(input, error) {
+  return expect(() => expectEval(input)).toThrow(error)
 }
 
 describe('evaluator', () => {
@@ -23,30 +27,26 @@ describe('evaluator', () => {
     expectEval('3 * 4;').toEqual(['number', 12])
     expectEval('3 / 4;').toEqual(['number', 0.75])
   })
+
+  it('referring to an unknown symbol is an error', () => {
+    expectEvalToThrow('x;', 'Unknown symbol \'x\'.')
+  })
+
+  it('can define a value and retrieve it', () => {
+    expectEval('x = 30; x;').toEqual(['number', 30])
+    expectEval('y = \'foo\'; y;').toEqual(['string', 'foo'])
+  })
+
+  it('modifying a value is an error', () => {
+    expectEvalToThrow('x = 30; x = 10;', 'Not allowed to re-assign symbol \'x\'.')
+  })
+
+  it('value of an assignment is the value assigned', () => {
+    expectEval('x = 31;').toEqual(["number", 31])
+  })
 })
 
 /*
-@test
-def Referring_to_an_unknown_symbol_is_an_error():
-    assert_prog_fails("x;", "Unknown symbol 'x'.")
-
-
-@test
-def Can_define_a_value_and_retrieve_it():
-    assert_that(evald("x = 30;x;"), equals(("number", 30)))
-    assert_that(evald("y = 'foo';y;"), equals(("string", "foo")))
-
-
-@test
-def Modifying_a_value_is_an_error():
-    assert_prog_fails("x = 30;x = 10;", "Not allowed to re-assign symbol 'x'.")
-
-
-@test
-def Value_of_an_assignment_is_the_value_assigned():
-    assert_that(evald("x = 31;"), equals(("number", 31)))
-
-
 @test
 def None_evaluates_to_None():
     assert_that(eval_expr(("none",), Env()), equals(("none", )))
