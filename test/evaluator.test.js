@@ -52,23 +52,19 @@ describe('evaluator', () => {
   it('body of a function can use arg values', () => {
     expectEval('{:(x, y) x + y;}(100, 1);').toEqual(['number', 101])
   })
+
+  it('can hold a reference to a function and call it', () => {
+    expectEval(`
+      add = {:(x, y) x + y;};
+      add(20, 2.2);
+    `).toEqual(['number', 22.2])
+  })
 })
 
 /*
 @test
 def None_evaluates_to_None():
     assert_that(eval_expr(("none",), Env()), equals(("none", )))
-
-@test
-def Can_hold_a_reference_to_a_function_and_call_it():
-    assert_that(
-        evald("""
-        add = {:(x, y) x + y;};
-        add(20, 2.2);
-        """),
-        equals(("number", 22.2))
-    )
-
 
 @test
 def A_symbol_has_different_life_inside_and_outside_a_function():
