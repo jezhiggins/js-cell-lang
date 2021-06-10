@@ -59,40 +59,31 @@ describe('evaluator', () => {
       add(20, 2.2);
     `).toEqual(['number', 22.2])
   })
+
+  it('a symbol has different life inside and outside a function', () => {
+    /* Define a symbol outside a function, redefine inside,
+       then evaluate outside.  What happened inside the
+       function should not affect the value outside. */
+    expectEval(`
+      dog = 'cat';
+      {dog = 3;}();
+      dog;
+    `).toEqual(['string', 'cat'])
+  })
+
+  it('a symbol within a function has the local value', () => {
+    expectEval(`
+      dog = 3;
+      cat = {dog = 77;dog;}();
+      cat;
+    `).toEqual(['number', 77])
+  })
 })
 
 /*
 @test
 def None_evaluates_to_None():
     assert_that(eval_expr(("none",), Env()), equals(("none", )))
-
-@test
-def A_symbol_has_different_life_inside_and_outside_a_function():
-    """Define a symbol outside a function, redefine inside,
-       then evaluate outside.  What happened inside the
-       function should not affect the value outside."""
-
-    assert_that(
-        evald("""
-            foo = "bar";
-            {foo = 3;}();
-            foo;
-        """),
-        equals(("string", "bar"))
-    )
-
-
-@test
-def A_symbol_within_a_function_has_the_local_value():
-    assert_that(
-        evald("""
-            foo = 3;
-            bar = {foo = 77;foo;}();
-            bar;
-        """),
-        equals(("number", 77))
-    )
-
 
 @test
 def Native_function_gets_called():
