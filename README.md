@@ -45,8 +45,7 @@ This repository is work in progress
 
 - [x] Lexer
 - [x] Parser
-- [ ] Compiler
-- [ ] Evaluator
+- [x] Evaluator
 - [ ] Library
 
 ## See also

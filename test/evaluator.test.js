@@ -78,6 +78,26 @@ describe('evaluator', () => {
       cat;
     `).toEqual(['number', 77])
   })
+
+  it('wrong number of arguments to a function is an error', () => {
+    expectEvalToThrow('{}(3);', '1 arguments passed to function (\'function\', [], []), but it requires 0 arguments.')
+    expectEvalToThrow('x = {:(a,b,c)}; x(3, 2);', '2 arguments passed to function (\'symbol\', \'x\'), but it requires 3 arguments.')
+  })
+
+  it('function arguments are independent', () => {
+    expectEval(`
+      fn = {:(x) {x;};};
+      a = fn("a");
+      b = fn("b");
+      a();
+    `).toEqual(['string', 'a'])
+    expectEval(`
+      fn = {:(x) {x;};};
+      a = fn("a");
+      b = fn("b");
+      b();
+    `).toEqual(['string', 'b'])
+  })
 })
 
 /*
@@ -92,18 +112,6 @@ def Native_function_gets_called():
     env = Env()
     env.set("native_fn", ("native", native_fn))
     assert_that(evald("native_fn( 2, 8 );", env), equals(("number", 10)))
-
-
-@test
-def Wrong_number_of_arguments_to_a_function_is_an_error():
-    assert_prog_fails(
-        "{}(3);",
-        "1 arguments passed to function ('function', [], []), but it requires 0 arguments."
-    )
-    assert_prog_fails(
-        "x={:(a, b, c)}; x(3, 2);",
-        "2 arguments passed to function ('symbol', 'x'), but it requires 3 arguments."
-    )
 
 
 @test
@@ -126,31 +134,6 @@ def Wrong_number_of_arguments_to_a_native_function_is_an_error():
         "2 arguments passed to function ('symbol', 'native_fn3'), but it requires 3 arguments.",
         env
     )
-
-
-@test
-def Function_arguments_are_independent():
-    assert_that(evald(
-        """
-        fn = {:(x) {x;};};
-        a = fn("a");
-        b = fn("b");
-        a();
-        """
-        ),
-        equals(evald("'a';"))
-    )
-    assert_that(evald(
-        """
-        fn = {:(x) {x;};};
-        a = fn("a");
-        b = fn("b");
-        b();
-        """
-        ),
-        equals(evald("'b';"))
-    )
-
 
 @test
 def A_native_function_can_edit_the_environment():
