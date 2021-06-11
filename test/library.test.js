@@ -25,69 +25,43 @@ describe('library tests', () => {
         'Only numbers may be passed to an if, but I was passed (\'string\', \'x\')')
     })
   })
+
+  describe('equals', () => {
+    it('equals returns true for identical numbers', () => {
+      expectEval('if(equals(1, 1), {"same";}, {"different";});')
+        .toEqual(['string', 'same'])
+    })
+
+    it('equals returns false for different numbers', () => {
+      expectEval('if(equals(1, 2), {"same";}, {"different";});')
+        .toEqual(['string', 'different'])
+    })
+
+    it('equals returns true for identical strings', () => {
+      expectEval('if(equals("dog", "dog"), {"same";}, {"different";});')
+        .toEqual(['string', 'same'])
+    })
+
+    it('equals returns false for different strings', () => {
+      expectEval('if(equals("dog", "cat"), {"same";}, {"different";});')
+        .toEqual(['string', 'different'])
+    })
+
+    it('functions are not equal even if the same', () => {
+      expectEval('if(equals({3;}, {3;}), {"same";}, {"different";});')
+        .toEqual(['string', 'different'])
+    })
+
+    it('different functions are not equal', () => {
+      expectEval('if(equals({:(x)3;}, {3;}), {"same";}, {"different";});')
+        .toEqual(['string', 'different'])
+      expectEval('if(equals({3;}, {2; 3;}), {"same";}, {"different";});')
+        .toEqual(['string', 'different'])
+    })
+  })
 })
 
 /*
-@test
-def Equals_returns_true_for_identical_numbers():
-    assert_that(
-        evald('if(equals(1, 1), {4;}, {5;});'),
-        equals(evald("4;"))
-    )
-
-
-@test
-def Equals_returns_false_for_different_numbers():
-    assert_that(
-        evald('if(equals(1, 2), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-
-
-@test
-def Equals_returns_true_for_identical_strings():
-    assert_that(
-        evald('if(equals("foo", "foo"), {4;}, {5;});'),
-        equals(evald("4;"))
-    )
-
-
-@test
-def Equals_returns_false_for_different_strings():
-    assert_that(
-        evald('if(equals("foo", "bar"), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-
-
-@test
-def Equals_returns_false_for_different_types():
-    assert_that(
-        evald('if(equals(1, "1"), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-
-
-@test
-def Functions_are_not_equal_even_if_the_same():
-    assert_that(
-        evald('if(equals({3;}, {3;}), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-
-
-@test
-def Different_functions_are_not_equal():
-    assert_that(
-        evald('if(equals({:(x)3;}, {3;}), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-    assert_that(
-        evald('if(equals({3;}, {2; 3;}), {4;}, {5;});'),
-        equals(evald("5;"))
-    )
-
-
 @test
 def Print_prints_to_stdout():
     stdout = StringIO()
