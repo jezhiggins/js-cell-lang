@@ -146,6 +146,25 @@ describe('library tests', () => {
       expectEval('not(2.2);').toEqual(0)
     })
   })
+
+  describe('concat', () => {
+    it('concat two empty strings gives empty string', () => {
+      expectEval('concat("", "");').toEqual('')
+    })
+    it('concat a string with an empty string give the string', () => {
+      expectEval('concat("dog", "");').toEqual('dog')
+      expectEval('concat("", "dog");').toEqual('dog')
+    })
+    it('concat two strings sticks them together', () => {
+      expectEval('concat("dog", "cat");').toEqual('dogcat')
+    })
+    it('concat first argument should be a string', () => {
+      expectEvalToThrow('concat(0, "dog");', 'concat() must take a string as its first argument')
+    })
+    it('concat second argument should be a string', () => {
+      expectEvalToThrow('concat("dog", 0);', 'concat() must take a string as its second argument')
+    })
+  })
 })
 
 /*
@@ -252,18 +271,4 @@ def Chars_in_deals_well_with_empty_string():
     assert_that(stdout.getvalue(), equals(""))
 
 
-@test
-def Concat_two_empty_strings_gives_empty_string():
-    assert_that(evald("concat('', '');"), equals(evald("'';")))
-
-
-@test
-def Concat_a_string_with_an_empty_makes_the_string():
-    assert_that(evald("concat('abc', '');"), equals(evald("'abc';")))
-    assert_that(evald("concat('', 'abc');"), equals(evald("'abc';")))
-
-
-@test
-def Concat_two_strings_sticks_them_together():
-    assert_that(evald("concat('foo', 'bar');"), equals(evald("'foobar';")))
  */

@@ -49,7 +49,7 @@ This repository is work in progress
 - [ ] Library
     - builtins  
         - [x] char_at
-        - [ ] concat 
+        - [X] concat 
         - [x] equals
         - [x] if
         - [x] len
