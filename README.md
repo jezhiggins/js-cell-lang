@@ -47,6 +47,20 @@ This repository is work in progress
 - [x] Parser
 - [x] Evaluator
 - [ ] Library
+    - builtins  
+        - [x] char_at
+        - [ ] concat 
+        - [x] equals
+        - [x] if
+        - [x] len
+        - [ ] print
+        - [x] set
+    - cell
+        - [ ] chars_in
+        - [ ] lists
+        - [x] not
+        - [x] pairs
+    
 
 ## See also
 
