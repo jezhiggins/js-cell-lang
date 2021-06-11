@@ -60,7 +60,7 @@ describe('library tests', () => {
     })
   })
 
-  describe('set function', () => {
+  describe('set', () => {
     it('set changes value of symbol', () => {
       expectEval('x = 3; set("x", 4); x;').toEqual(4);
     })
@@ -87,7 +87,7 @@ describe('library tests', () => {
     })
   })
 
-  describe('char_at function', () => {
+  describe('char_at', () => {
     it('char_at gives the nth character of a string', () => {
       expectEval('char_at(0, \'abc\');').toEqual('a')
       expectEval('char_at(1, \'abc\');').toEqual('b')
@@ -106,7 +106,7 @@ describe('library tests', () => {
     })
   })
 
-  describe('len function', () => {
+  describe('len', () => {
     it('len gives the length of a string', () => {
       expectEval('len("");').toEqual(0)
       expectEval('len("abc");').toEqual(3)
@@ -129,6 +129,21 @@ describe('library tests', () => {
         p = pair("foo", 4);
         second(p);
       `).toEqual(4)
+    })
+  })
+
+  describe("not", () => {
+    it("not(0) -> 1", () => {
+      expectEval('not(0);').toEqual(1)
+    })
+    it("not(1) -> 0", () => {
+      expectEval('not(1);').toEqual(0)
+    })
+    it("not any other number goes to 0", () => {
+      expectEval('not(22);').toEqual(0)
+      expectEval('not(2);').toEqual(0)
+      expectEval('not(5352);').toEqual(0)
+      expectEval('not(2.2);').toEqual(0)
     })
   })
 })
@@ -176,14 +191,6 @@ def Can_append_item_to_a_nonempty_list():
         evald("second(second(second(append(list2(1, 2), 3))));"),
         equals(evald("None;"))
     )
-
-
-@test
-def Not_negates():
-    assert_that(evald("not(0);"), equals(evald("1;")))
-    assert_that(evald("not(1);"), equals(evald("0;")))
-    assert_that(evald("not(2);"), equals(evald("0;")))
-
 
 @test
 def For_loops_through_everything_in_a_list():
