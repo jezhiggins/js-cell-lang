@@ -199,70 +199,49 @@ describe('library tests', () => {
       expect(result).toBeNull()
     })
   })
+
+  describe('lists', () => {
+    it('list0 is None', () => {
+      expectEval('list0();').toBeNull()
+    })
+    it('can append item to an empty list', () => {
+      expectEval('first(append(list0(), 3));').toEqual(3)
+      expectEval('second(append(list0(), 3));').toBeNull()
+    })
+    it('can append item to a nonempty list', () => {
+      expectEval('first(append(list2(1, 2), 3));').toEqual(1)
+      expectEval('first(second(append(list2(1, 2), 3)));').toEqual(2)
+      expectEval('first(second(second(append(list2(1, 2), 3))));').toEqual(3)
+      expectEval('second(second(second(append(list2(1, 2), 3))));').toBeNull()
+    })
+    it('for loops through everything in a list', () => {
+      const capture = captureStdout()
+      cellEval(`
+        for(list3("a", "b", "c"),
+          {:(ch)
+              print(ch);
+          });
+      `)
+      capture.release()
+
+      expect(capture.result()).toEqual(['a\n', 'b\n', 'c\n'])
+    })
+    it('for loops through nothing when given an empty list', () => {
+      const capture = captureStdout()
+      cellEval(`
+        for(list0(),
+          {:(ch)
+              print(ch);
+          });
+      `)
+      capture.release()
+
+      expect(capture.result()).toEqual([])
+    })
+  })
 })
 
 /*
-
-@test
-def List0_is_None():
-    assert_that(evald("list0();"), equals(evald("None;")))
-
-
-@test
-def Can_append_item_to_an_empty_list():
-    assert_that(evald("first( append(list0(), 3));"), equals(evald("3;")))
-    assert_that(evald("second(append(list0(), 3));"), equals(evald("None;")))
-
-
-@test
-def Can_append_item_to_a_nonempty_list():
-    assert_that(
-        evald("first(append(list2(1, 2), 3));"),
-        equals(evald("1;"))
-    )
-    assert_that(
-        evald("first(second(append(list2(1, 2), 3)));"),
-        equals(evald("2;"))
-    )
-    assert_that(
-        evald("first(second(second(append(list2(1, 2), 3))));"),
-        equals(evald("3;"))
-    )
-    assert_that(
-        evald("second(second(second(append(list2(1, 2), 3))));"),
-        equals(evald("None;"))
-    )
-
-@test
-def For_loops_through_everything_in_a_list():
-    stdout = StringIO()
-    evald(
-        """
-        for(list3("a", "b", "c"),
-        {:(ch)
-            print(ch);
-        });
-        """,
-        stdout=stdout
-    )
-    assert_that(stdout.getvalue(), equals("a\nb\nc\n"))
-
-
-@test
-def For_loops_through_nothing_when_given_empty_list():
-    stdout = StringIO()
-    evald(
-        """
-        for(list0(),
-        {:(ch)
-            print(ch);
-        });
-        """,
-        stdout=stdout
-    )
-    assert_that(stdout.getvalue(), equals(""))
-
-
 @test
 def Chars_in_allows_iterating_over_the_characters_of_a_string():
     stdout = StringIO()

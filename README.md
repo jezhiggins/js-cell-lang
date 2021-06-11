@@ -53,11 +53,11 @@ This repository is work in progress
         - [x] equals
         - [x] if
         - [x] len
-        - [ ] print
+        - [x] print
         - [x] set
     - cell
         - [ ] chars_in
-        - [ ] lists
+        - [x] lists
         - [x] not
         - [x] pairs
     
