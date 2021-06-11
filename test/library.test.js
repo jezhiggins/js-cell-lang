@@ -105,6 +105,16 @@ describe('library tests', () => {
       expectEvalToThrow('char_at(0, 0);', 'char_at() must take a string as its second argument.')
     })
   })
+
+  describe('len function', () => {
+    it('len gives the length of a string', () => {
+      expectEval('len("");').toEqual(0)
+      expectEval('len("abc");').toEqual(3)
+    })
+    it('len must be passed a string', () => {
+      expectEvalToThrow('len(0);', 'len() can only be called for a string.')
+    })
+  })
 })
 
 /*
@@ -174,12 +184,6 @@ def Can_append_item_to_a_nonempty_list():
         evald("second(second(second(append(list2(1, 2), 3))));"),
         equals(evald("None;"))
     )
-
-
-@test
-def Len_gives_the_length_of_a_string():
-    assert_that(evald("len('');"), equals(evald("0;")))
-    assert_that(evald("len('abc');"), equals(evald("3;")))
 
 
 @test
