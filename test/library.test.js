@@ -3,7 +3,7 @@ import { parse } from '../lib/parser.js'
 import { evaluate } from '../lib/evaluator.js'
 
 function expectEval(input) {
-  return expect(evaluate(parse(lex(input))))
+  return expect(evaluate(parse(lex(input)))[1])
 }
 
 function expectEvalToThrow(input, error) {
@@ -13,11 +13,11 @@ function expectEvalToThrow(input, error) {
 describe('library tests', () => {
   describe('if', () => {
     it('if calls then if first argument is nonzero', () => {
-      expectEval('if(1, {"t";}, {"f";});').toEqual(['string', 't'])
+      expectEval('if(1, {"t";}, {"f";});').toEqual('t')
     })
 
     it('if calls else if first argument is zero', () => {
-      expectEval('if(0, {"t";}, {"f";});').toEqual(['string', 'f'])
+      expectEval('if(0, {"t";}, {"f";});').toEqual('f')
     })
 
     it('call if with a nonnumber is an error', () => {
@@ -29,40 +29,40 @@ describe('library tests', () => {
   describe('equals', () => {
     it('equals returns true for identical numbers', () => {
       expectEval('if(equals(1, 1), {"same";}, {"different";});')
-        .toEqual(['string', 'same'])
+        .toEqual('same')
     })
 
     it('equals returns false for different numbers', () => {
       expectEval('if(equals(1, 2), {"same";}, {"different";});')
-        .toEqual(['string', 'different'])
+        .toEqual('different')
     })
 
     it('equals returns true for identical strings', () => {
       expectEval('if(equals("dog", "dog"), {"same";}, {"different";});')
-        .toEqual(['string', 'same'])
+        .toEqual('same')
     })
 
     it('equals returns false for different strings', () => {
       expectEval('if(equals("dog", "cat"), {"same";}, {"different";});')
-        .toEqual(['string', 'different'])
+        .toEqual('different')
     })
 
     it('functions are not equal even if the same', () => {
       expectEval('if(equals({3;}, {3;}), {"same";}, {"different";});')
-        .toEqual(['string', 'different'])
+        .toEqual('different')
     })
 
     it('different functions are not equal', () => {
       expectEval('if(equals({:(x)3;}, {3;}), {"same";}, {"different";});')
-        .toEqual(['string', 'different'])
+        .toEqual('different')
       expectEval('if(equals({3;}, {2; 3;}), {"same";}, {"different";});')
-        .toEqual(['string', 'different'])
+        .toEqual('different')
     })
   })
 
   describe('set function', () => {
     it('set changes value of symbol', () => {
-      expectEval('x = 3; set("x", 4); x;').toEqual(['number', 4]);
+      expectEval('x = 3; set("x", 4); x;').toEqual(4);
     })
 
     it('set changes value of symbol in outer scope', () => {
@@ -73,7 +73,7 @@ describe('library tests', () => {
         };
         fn();
         var;
-      `).toEqual(['string', 'cat']);
+      `).toEqual('cat');
     })
 
     it('calling set with a nonstring is an error', () => {
@@ -84,6 +84,25 @@ describe('library tests', () => {
     it ('set must change an existing symbol', () => {
       expectEvalToThrow('set("x", 4);',
         'Attempted to set name \'x\' but it does not exist.')
+    })
+  })
+
+  describe('char_at function', () => {
+    it('char_at gives the nth character of a string', () => {
+      expectEval('char_at(0, \'abc\');').toEqual('a')
+      expectEval('char_at(1, \'abc\');').toEqual('b')
+      expectEval('char_at(2, \'abc\');').toEqual('c')
+      expectEval('char_at(3, \'abc\');').toEqual(null)
+      expectEval('char_at(0, \'\');').toEqual(null)
+      expectEval('char_at(1, \'\');').toEqual(null)
+    })
+
+    it('char_at first parameter must be a number', () => {
+      expectEvalToThrow('char_at("fruit", "abc");', 'char_at() must take a number as its first argument.')
+    })
+
+    it('char_at second parameter must be a string', () => {
+      expectEvalToThrow('char_at(0, 0);', 'char_at() must take a string as its second argument.')
     })
   })
 })
@@ -161,16 +180,6 @@ def Can_append_item_to_a_nonempty_list():
 def Len_gives_the_length_of_a_string():
     assert_that(evald("len('');"), equals(evald("0;")))
     assert_that(evald("len('abc');"), equals(evald("3;")))
-
-
-@test
-def Char_at_gives_the_nth_character_of_a_string():
-    assert_that(evald("char_at(0, 'abc');"), equals(evald("'a';")))
-    assert_that(evald("char_at(1, 'abc');"), equals(evald("'b';")))
-    assert_that(evald("char_at(2, 'abc');"), equals(evald("'c';")))
-    assert_that(evald("char_at(3, 'abc');"), equals(evald("None;")))
-    assert_that(evald("char_at(0, ''   );"), equals(evald("None;")))
-    assert_that(evald("char_at(1, ''   );"), equals(evald("None;")))
 
 
 @test

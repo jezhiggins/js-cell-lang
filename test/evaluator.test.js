@@ -12,7 +12,7 @@ function expectEvalToThrow(input, error) {
 
 describe('evaluator', () => {
   it('evaluating an empty program gives none', () => {
-    expectEval("").toEqual(["none"])
+    expectEval("").toEqual(['none', null])
   })
 
   it('evaluating a primitive returns itself', () => {
