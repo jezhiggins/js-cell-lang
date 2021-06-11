@@ -110,7 +110,7 @@ def Native_function_gets_called():
     def native_fn(env, x, y):
         return ("number", x[1] + y[1])
     env = Env()
-    env.set("native_fn", ("native", native_fn))
+    env.set("native_fn", ("native_fns", native_fn))
     assert_that(evald("native_fn( 2, 8 );", env), equals(("number", 10)))
 
 
@@ -122,8 +122,8 @@ def Wrong_number_of_arguments_to_a_native_function_is_an_error():
     def native_fn3(env, x, y, z):
         return ("number", 12)
     env = Env()
-    env.set("native_fn0", ("native", native_fn0))
-    env.set("native_fn3", ("native", native_fn3))
+    env.set("native_fn0", ("native_fns", native_fn0))
+    env.set("native_fn3", ("native_fns", native_fn3))
     assert_prog_fails(
         "native_fn0(3);",
         "1 arguments passed to function ('symbol', 'native_fn0'), but it requires 0 arguments.",
@@ -140,7 +140,7 @@ def A_native_function_can_edit_the_environment():
     def mx3(env):
         env.set("x", ("number", 3))
     env = Env()
-    env.set("make_x_three", ("native", mx3))
+    env.set("make_x_three", ("native_fns", mx3))
     assert_that(
         evald("x=1;make_x_three();x;", env),
         equals(("number", 3))
@@ -159,8 +159,8 @@ def A_closure_holds_updateable_values():
             ret = else_fn
         return eval_expr(("call", ret, []), env)
     env = Env()
-    env.set("dumb_set", ("native", dumb_set))
-    env.set("dumb_if_equal", ("native", dumb_if_equal))
+    env.set("dumb_set", ("native_fns", dumb_set))
+    env.set("dumb_if_equal", ("native_fns", dumb_if_equal))
     assert_that(
         evald(
             """

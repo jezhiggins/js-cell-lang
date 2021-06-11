@@ -115,6 +115,22 @@ describe('library tests', () => {
       expectEvalToThrow('len(0);', 'len() can only be called for a string.')
     })
   })
+
+  describe("pairs", () => {
+    it('make a pair and access the first element', () => {
+      expectEval(`
+        p = pair("foo", 4);
+        first(p);
+      `).toEqual('foo')
+    })
+
+    it('make a pair and access the second element', () => {
+      expectEval(`
+        p = pair("foo", 4);
+        second(p);
+      `).toEqual(4)
+    })
+  })
 })
 
 /*
@@ -129,30 +145,6 @@ def Print_prints_to_stdout():
 def Print_returns_None():
     stdout = StringIO()
     assert_that(evald('print("foo");', stdout=stdout), equals(("none",)))
-
-
-
-@test
-def Can_make_a_pair_and_access_the_first_element():
-    assert_that(evald(
-        """
-        p = pair("foo", 4);
-        first(p);
-        """
-        ),
-        equals(evald("'foo';"))
-    )
-
-@test
-def Can_make_a_pair_and_access_the_second_element():
-    assert_that(evald(
-        """
-        p = pair("foo", 4);
-        second(p);
-        """
-        ),
-        equals(evald("4;"))
-    )
 
 
 @test
