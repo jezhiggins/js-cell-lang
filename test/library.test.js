@@ -2,12 +2,28 @@ import { lex } from '../lib/lexer.js'
 import { parse } from '../lib/parser.js'
 import { evaluate } from '../lib/evaluator.js'
 
+function cellEval(input) {
+  return evaluate(parse(lex(input)))[1]
+}
+
 function expectEval(input) {
-  return expect(evaluate(parse(lex(input)))[1])
+  return expect(cellEval(input))
 }
 
 function expectEvalToThrow(input, error) {
   return expect(() => expectEval(input)).toThrow(error)
+}
+
+function captureStdout() {
+  const boundProcessStdout = process.stdout.write.bind(process.stdout)
+  const captured = []
+  process.stdout.write = (string, encoding, fd) => {
+    captured.push(string)
+  }
+  return {
+    result: () => (captured.length === 1) ? captured[0] : captured,
+    release: () => process.stdout.write = boundProcessStdout
+  }
 }
 
 describe('library tests', () => {
@@ -165,21 +181,27 @@ describe('library tests', () => {
       expectEvalToThrow('concat("dog", 0);', 'concat() must take a string as its second argument')
     })
   })
+
+  describe('print', () => {
+    it('print prints to stdout', () => {
+      const capture = captureStdout()
+      cellEval("print('dog');")
+      capture.release()
+
+      expect(capture.result()).toEqual('dog\n')
+    })
+
+    it('print returns none', () => {
+      const capture = captureStdout()
+      const result = cellEval("print('dog');")
+      capture.release()
+
+      expect(result).toBeNull()
+    })
+  })
 })
 
 /*
-@test
-def Print_prints_to_stdout():
-    stdout = StringIO()
-    evald('print("foo");', stdout=stdout)
-    assert_that(stdout.getvalue(), equals("foo\n"))
-
-
-@test
-def Print_returns_None():
-    stdout = StringIO()
-    assert_that(evald('print("foo");', stdout=stdout), equals(("none",)))
-
 
 @test
 def List0_is_None():
