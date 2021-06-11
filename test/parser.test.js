@@ -212,7 +212,7 @@ describe('parser', () => {
     expect(() => parsed('{:(aa + 3, d)};'))
       .toThrow('Only symbols are allowed in function parameter lists. '
         + 'I found: '
-        + '(\'operation\', \'+\', (\'symbol\', \'aa\'), (\'number\', \'3\')).'
+        + '(\'operation\', \'+\', [\'symbol\', \'aa\'], [\'number\', \'3\']).'
       )
   })
 

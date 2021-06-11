@@ -1,4 +1,4 @@
-import { peekableStream } from '../lib/peekable-stream.js'
+import { peekableStream } from '../lib/util/peekable-stream.js'
 import { lex } from '../lib/lexer.js'
 
 describe('peekable stream', () => {
