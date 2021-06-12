@@ -239,37 +239,21 @@ describe('library tests', () => {
       expect(capture.result()).toEqual([])
     })
   })
+
+  describe('chars_in', () => {
+    it('chars_in allows iterating over the characters of a string', () => {
+      const capture = captureStdout()
+      cellEval('for(chars_in("abc"), {:(ch) print(ch); });')
+      capture.release()
+
+      expect(capture.result()).toEqual(['a\n', 'b\n', 'c\n'])
+    })
+    it('chars_in deals well with empty string', () => {
+      const capture = captureStdout()
+      cellEval('for(chars_in(""), {:(ch) print(ch); });')
+      capture.release()
+
+      expect(capture.result()).toEqual([])
+    })
+  })
 })
-
-/*
-@test
-def Chars_in_allows_iterating_over_the_characters_of_a_string():
-    stdout = StringIO()
-    evald(
-        """
-        for(chars_in("abc"),
-        {:(ch)
-            print(ch);
-        });
-        """,
-        stdout=stdout
-    )
-    assert_that(stdout.getvalue(), equals("a\nb\nc\n"))
-
-
-@test
-def Chars_in_deals_well_with_empty_string():
-    stdout = StringIO()
-    evald(
-        """
-        for(chars_in(""),
-        {:(ch)
-            print(ch);
-        });
-        """,
-        stdout=stdout
-    )
-    assert_that(stdout.getvalue(), equals(""))
-
-
- */

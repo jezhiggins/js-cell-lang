@@ -46,7 +46,7 @@ This repository is work in progress
 - [x] Lexer
 - [x] Parser
 - [x] Evaluator
-- [ ] Library
+- [x] Library
     - builtins  
         - [x] char_at
         - [X] concat 
@@ -56,11 +56,19 @@ This repository is work in progress
         - [x] print
         - [x] set
     - cell
-        - [ ] chars_in
+        - [x] chars_in
         - [x] lists
         - [x] not
         - [x] pairs
-    
+- [ ] run file
+- [ ] repl
+- [ ] fun things to do with the AST
+    - [ ] constant folding
+    - [ ] obfuscation
+    - [ ] pretty printing?
+    - [ ] minification?
+    - [ ] cross-compile to JS?
+    - [ ] cross-compile to something else?
 
 ## See also
 
