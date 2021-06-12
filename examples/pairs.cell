@@ -1,0 +1,13 @@
+pair_ =
+    {:( f, s )
+        {:( which )
+            if( equals( which, "f" ),
+                {f;},
+                {s;}
+            );
+        };
+    };
+
+first_ = {:(p) p("f");};
+
+second_ = {:(p) p("s");};
