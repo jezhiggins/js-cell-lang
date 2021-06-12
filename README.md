@@ -48,7 +48,7 @@ This repository is work in progress
 - [x] Evaluator
 - [x] Library
 - [x] run file
-- [ ] repl
+- [x] repl (functional, but needs polish)
 - [ ] fun things to do with the AST
     - [ ] constant folding
     - [ ] obfuscation
