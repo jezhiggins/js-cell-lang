@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "cell": "./bin/cell.js",
     "test": "jest"
   },
   "jest": {
@@ -20,6 +21,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jezhiggins/jscell/issues"
+  },
+  "bin": {
+    "cell": "./cell.js"
   },
   "homepage": "https://github.com/jezhiggins/jscell#readme",
   "devDependencies": {

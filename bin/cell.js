@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'fs'
-import { topLevelEnvironment } from './lib/environment.js';
-import { evaluate } from './lib/evaluator.js'
-import { parse } from './lib/parser.js'
-import { lex } from './lib/lexer.js'
+import { topLevelEnvironment } from '../lib/environment.js';
+import { evaluate } from '../lib/evaluator.js'
+import { parse } from '../lib/parser.js'
+import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 
 function runFiles(files) {
