@@ -6,6 +6,32 @@ import { evaluate } from '../lib/evaluator.js'
 import { parse } from '../lib/parser.js'
 import { lex } from '../lib/lexer.js'
 import repl from 'repl'
+import { program } from 'commander/esm.mjs'
+
+program
+  .command('lex <sources...>')
+  .description('Display the tokenized program source')
+  .action(sources => {
+    lexFiles(sources)
+  })
+program
+  .arguments('[sources...]')
+  .action(sources => {
+    if (sources.length === 0)
+      runRepl()
+    else
+      runFiles(sources)
+  })
+
+program.parse(process.arv)
+
+function lexFiles(files) {
+  for (const file of files) {
+    const code = readFileSync(file).toString()
+    for (const token of lex(code))
+      console.log(token)
+  }
+}
 
 function runFiles(files) {
   const env = topLevelEnvironment()
@@ -25,9 +51,4 @@ function runRepl() {
   repl.start({ prompt: '>>> ', eval: evalCell });
 }
 
-const files = process.argv.slice(2)
-if (files.length !== 0)
-  runFiles(files)
-else
-  runRepl()
 
