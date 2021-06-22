@@ -7,6 +7,7 @@ import { parse } from '../lib/parser.js'
 import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
+import chalk from 'chalk'
 
 program
   .command('lex <sources...>')
@@ -31,7 +32,7 @@ function lexFiles(files) {
   for (const file of files) {
     const code = readFileSync(file).toString()
     for (const token of lex(code))
-      console.log(token)
+      console.log(`[ ${chalk.yellow(token[0])}, '${chalk.green(token[1])}' ]`)
   }
 }
 
@@ -48,29 +49,41 @@ function prettyPrintAst(node, indent = 0) {
   const [type, ...args] = node
   switch (type) {
     case 'symbol':
+      print(`[ ${chalk.yellow.italic(type)}, ${chalk.yellow(args[0])} ]`)
+      break;
     case 'number':
-      print(`[ ${type}, ${args[0]} ]`)
+      print(`[ ${chalk.yellow.italic(type)}, ${chalk.cyan(args[0])} ]`)
       break;
     case 'string':
-      print(`[ ${type}, '${args[0]}' ]`)
+      print(`[ ${chalk.yellow.italic(type)}, '${chalk.green(args[0])}' ]`)
       break;
     case 'assignment':
-      print(`[ ${type}`)
+      print(`[ ${chalk.yellow.italic(type)}`)
       prettyPrintAst(args[0], indent + 2)
       prettyPrintAst(args[1], indent + 2)
       print(']')
       break;
     case 'call':
-      print(`[ ${type}`)
+      print(`[ ${chalk.yellow.italic(type)}`)
       prettyPrintAst(args[0], indent + 2)
-      print('  [')
-      for (const n of args[1])
-        prettyPrintAst(n, indent + 4)
-      print('  ]')
+      if (args[1].length) {
+        print('  [')
+        for (const n of args[1])
+          prettyPrintAst(n, indent + 4)
+        print('  ]')
+      } else {
+        print('  [ ]')
+      }
+      print(']')
+      break;
+    case 'operation':
+      print(`[ ${chalk.yellow.italic(type)}, ${chalk.white.bold(args[0])}`)
+      prettyPrintAst(args[1], indent + 2)
+      prettyPrintAst(args[2], indent + 2)
       print(']')
       break;
     case 'function':
-      print(`[ ${type}`)
+      print(`[ ${chalk.yellow.italic(type)}`)
       if (args[0].length) {
         print('  [')
         for (const n of m)
@@ -95,14 +108,16 @@ function pad(indent) {
 function runFiles(files) {
   const env = topLevelEnvironment()
   for (const file of files) {
-    const code = readFileSync(file).toString()
-    evaluate(parse(lex(code)), env)
+    if (file === '-')
+      runRepl(env)
+    else {
+      const code = readFileSync(file).toString()
+      evaluate(parse(lex(code)), env)
+    }
   }
 }
 
-function runRepl() {
-  const env = topLevelEnvironment()
-
+function runRepl(env = topLevelEnvironment()) {
   const evalCell = (cmd, context, filename, callback) => {
     callback(null, evaluate(parse(lex(cmd)), env))
   }
