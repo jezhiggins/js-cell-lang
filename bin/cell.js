@@ -86,7 +86,7 @@ function prettyPrintAst(node, indent = 0) {
       print(`[ ${chalk.yellow.italic(type)}`)
       if (args[0].length) {
         print('  [')
-        for (const n of m)
+        for (const n of args[0])
           prettyPrintAst(n, indent + 4)
         print('  ]')
       } else {
