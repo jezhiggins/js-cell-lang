@@ -1,5 +1,5 @@
 {
-  "name": "jscell",
+  "name": "cell-lang",
   "version": "1.0.0",
   "description": "Cell, a programming language designed to have a minimally small implementation.",
   "main": "index.js",
