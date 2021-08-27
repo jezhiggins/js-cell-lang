@@ -1,6 +1,6 @@
 {
   "name": "cell-lang",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cell, a programming language designed to have a minimally small implementation.",
   "main": "index.js",
   "type": "module",
@@ -15,17 +15,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jezhiggins/jscell.git"
+    "url": "git+https://github.com/jezhiggins/js-cell-lang.git"
   },
   "author": "Jez Higgins, JezUK Ltd",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jezhiggins/jscell/issues"
+    "url": "https://github.com/jezhiggins/js-cell-lang/issues"
   },
   "bin": {
     "cell": "./cell.js"
   },
-  "homepage": "https://github.com/jezhiggins/jscell#readme",
+  "homepage": "https://github.com/jezhiggins/js-cell-lang#readme",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
