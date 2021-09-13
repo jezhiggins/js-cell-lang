@@ -10,6 +10,10 @@ function expectParsed(input) {
   return expect(result.length === 1 ? result[0] : result)
 }
 
+function badParse(input) {
+  return expect(() => parsed(input))
+}
+
 describe('parser', () => {
   it('empty file produces nothing', () => {
     expectParsed('').toEqual([])
@@ -272,6 +276,28 @@ describe('parser', () => {
   })
 })
 
+describe('bad parses', () => {
+  it('two numbers in a row', () => {
+    badParse('100 101;').toThrow('Unexpected number token, \'101\'.');
+  })
+
+  it('number butted up against a symbol', () => {
+    badParse('100dog = 1;').toThrow('Unexpected symbol token, \'dog\'.');
+  })
+
+  it('number then string', () => {
+    badParse('100 "dog";').toThrow('Unexpected string token, \'dog\'.');
+  })
+
+  it('string then number', () => {
+    badParse('"dog" 100;').toThrow('Unexpected number token, \'100\'.');
+  })
+
+  it('crazy new token', () => {
+    expect(() => [...parse([['wrong', 'nonsense']])])
+      .toThrow('Unknown wrong token, \'nonsense\'.');
+  })
+})
 /*
 @system_test
 def All_examples_parse():
