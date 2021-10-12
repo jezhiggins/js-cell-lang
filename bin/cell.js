@@ -38,7 +38,7 @@ function parseCode(code) {
 }
 
 function evaluateCode(code, env) {
-  evaluate(parse(lex(code)), env)
+  return evaluate(parse(lex(code)), env)
 }
 
 function makeEvaluator() {
