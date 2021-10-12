@@ -54,7 +54,7 @@ This repository is work in progress
 - [ ] fun things to do with the AST
     - [ ] constant folding
     - [ ] obfuscation
-    - [ ] pretty printing?
+    - [x] pretty printing?
     - [ ] minification?
     - [ ] cross-compile to JS?
     - [ ] cross-compile to something else?
