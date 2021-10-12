@@ -2,7 +2,7 @@
 
 Cell is a minimally simple programming language designed to demonstrate how to write a programming language. 
 
-Cell was designed by [Andy Balaam](http://www.artificialworlds.net/). His [original implementation is in Python](https://gitlab.com/cell_lang/cell). This repository is a new JavaScript implementation, written as the basis of a forthcoming talk to [the BrumJS Meetup](https://www.meetup.com/brum_js/), scheduled for September 2021. 
+Cell was designed by [Andy Balaam](http://www.artificialworlds.net/). His [original implementation is in Python](https://gitlab.com/cell_lang/cell). This repository is a new JavaScript implementation, written as the basis of a forthcoming talk to [Norfolk Developers](https://www.meetup.com/Norfolk-Developers-NorDev/), scheduled for October 2021. 
 
 Here is an example program:
 
