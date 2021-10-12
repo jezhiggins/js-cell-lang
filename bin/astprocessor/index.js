@@ -1,7 +1,9 @@
 import { constantFold } from './constantFolding.js'
+import { obfuscator } from './obfuscator.js'
 
 const processors = {
-  'fold': constantFold
+  'fold': constantFold,
+  'obfuscate': obfuscator
 }
 
 function walkNode(expression, processor) {
@@ -15,16 +17,23 @@ function walkNode(expression, processor) {
   switch (type) {
     case 'assignment':
     case 'operation':
+      operand1 = walkNode(operand1, processor);
       operand2 = walkNode(operand2, processor);
       operand3 = walkNode(operand3, processor);
       break;
     case 'function':
+      operand1 = operand1.map(o => walkNode(o, processor))
+      operand2 = operand2.map(o => walkNode(o, processor))
+      break;
+    case 'call':
+      operand1 = walkNode(operand1, processor);
       operand2 = operand2.map(o => walkNode(o, processor))
       break;
   }
 
   expression = processor([type, operand1, operand2, operand3])
-  return expression
+
+  return expression.filter(o => o)
 }
 
 function astProcess(ast, processorName) {

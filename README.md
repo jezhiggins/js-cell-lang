@@ -53,7 +53,7 @@ This repository is work in progress
 - [x] repl (functional, but needs polish)
 - [ ] fun things to do with the AST
     - [ ] constant folding
-    - [ ] obfuscation
+    - [x] obfuscation
     - [x] pretty printing?
     - [ ] minification?
     - [ ] cross-compile to JS?
