@@ -295,7 +295,7 @@ describe('bad parses', () => {
 
   it('crazy new token', () => {
     expect(() => [...parse([['wrong', 'nonsense']])])
-      .toThrow('Unknown wrong token, \'nonsense\'.');
+      .toThrow('Unexpected \'wrong\' token, \'nonsense\'.');
   })
 })
 /*
