@@ -8,6 +8,10 @@ import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
 import chalk from 'chalk'
+import { astProcess } from './astprocessor/index.js'
+
+program
+  .option('-a, --ast <ast-processors...>', 'AST processors')
 
 program
   .command('lex [sources...]')
@@ -27,18 +31,31 @@ try {
   console.error(e)
 }
 
+function* parseWithAstProcessors(tokens) {
+  const processors = program.opts().ast
+
+  if (!processors)
+    yield* parse(tokens)
+
+  for (let ast of parse(tokens)) {
+    for (const processor of processors)
+      ast = astProcess(ast, processor)
+    yield ast;
+  }
+}
+
 function lexCode(code) {
   for (const token of lex(code))
     console.log(` [ ${chalk.yellow(token[0])}, '${chalk.green(token[1])}' ]`)
 }
 
 function parseCode(code) {
-  for (const ast of parse(lex(code)))
+  for (const ast of parseWithAstProcessors(lex(code)))
     prettyPrintAst(ast)
 }
 
 function evaluateCode(code, env) {
-  return evaluate(parse(lex(code)), env)
+  return evaluate(parseWithAstProcessors(lex(code)), env)
 }
 
 function makeEvaluator() {
