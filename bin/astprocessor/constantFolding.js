@@ -9,10 +9,17 @@ function constantFold(ast) {
   if (lType !== 'number' || rType !== 'number')
     return ast
 
-  return ['number', do_operation(operand1, Number.parseFloat(lValue), Number.parseFloat(rValue))]
+  return [
+    'number',
+    calculate(
+      operand1,
+      Number.parseFloat(lValue),
+      Number.parseFloat(rValue)
+    )
+  ]
 }
 
-function do_operation(operation, lhs, rhs) {
+function calculate(operation, lhs, rhs) {
   switch(operation) {
     case '+':
       return lhs + rhs
