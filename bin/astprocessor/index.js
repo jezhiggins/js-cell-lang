@@ -10,8 +10,6 @@ function walkNode(expression, processor) {
   if (!expression)
     return expression
 
-  expression = processor(expression)
-
   let [type, operand1, operand2, operand3] = expression
 
   switch (type) {

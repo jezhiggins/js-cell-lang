@@ -2,7 +2,7 @@ function constantFold(ast) {
   if (ast && ast[0] !== 'operation')
     return ast
 
-  const [, operand1, operand2, operand3] = ast
+  const [, [operand1], operand2, operand3] = ast
   const [lType, lValue] = operand2
   const [rType, rValue] = operand3
 
