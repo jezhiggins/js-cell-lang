@@ -13,6 +13,8 @@ const nameMap = new Map();
 }
 
 function obfuscator(ast) {
+  if (isCallingSet(ast))
+    return obfuscateSetCall(ast)
   if (ast && ast[0] !== 'symbol')
     return ast
 
@@ -28,6 +30,21 @@ function obfuscator(ast) {
   operand1 = nameMap.get(operand1)
 
   return ['symbol', operand1]
+}
+
+function isCallingSet(ast) {
+  return ast && ast[0] === 'call' && ast[1][0] === 'symbol' && ast[1][1] === 'set';
+}
+
+function obfuscateSetCall(ast) {
+  const [, fnName, [varName, ...rest]] = ast
+  return ['call',
+    fnName,
+    [
+      [ 'string', obfuscator(['symbol', varName[1]])[1] ],
+      ...rest
+    ]
+  ]
 }
 
 export { obfuscator }
