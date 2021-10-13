@@ -7,7 +7,7 @@ function minimiseNode(node) {
     case 'number':
       return operand1
     case 'string':
-      return `'${operand1}'`
+      return operand1 ? `'${operand1}'` : "''"
     case 'assignment':
       return minimiseNode(operand1) + '=' + minimiseNode(operand2)
     case 'call':
@@ -17,7 +17,7 @@ function minimiseNode(node) {
       return minimiseNode(operand2) + operand1 + minimiseNode(operand3)
     case 'function':
       let fn = '{';
-      if (operand1) {
+      if (operand1.length) {
         fn += ':('
         fn += operand1.map(o => minimiseNode(o)).join(',')
         fn += ')'
