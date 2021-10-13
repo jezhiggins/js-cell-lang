@@ -1,5 +1,7 @@
 import { loadStandardLibrary } from '../../lib/library/index.js'
 import { Environment } from '../../lib/environment.js'
+import pkg from 'btoa'
+const btoa = pkg
 
 const nameMap = new Map();
 
@@ -20,7 +22,7 @@ function obfuscator(ast) {
     return ast
 
   if (!nameMap.has(operand1)) {
-    const obs = `obs_${btoa(operand1)}`
+    const obs = `obs_${btoa(operand1).replace(/=/g,'')}`
     nameMap.set(operand1, obs)
   }
   operand1 = nameMap.get(operand1)

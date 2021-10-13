@@ -10,9 +10,11 @@ import { program } from 'commander/esm.mjs'
 import chalk from 'chalk'
 import { astProcess } from './astprocessor/index.js'
 import { prettyPrint } from './astprinter/pretty.js'
+import { minimise } from "./astprinter/minimise.js";
 
 program
-  .option('-a, --ast <ast-processors...>', 'AST processors')
+  .option('--fold', 'Apply constant folding')
+  .option('--obfuscate')
 
 program
   .command('lex [sources...]')
@@ -22,6 +24,10 @@ program
   .command('parse [sources...]')
   .description('Display the program\'s AST')
   .action(sources => run(sources, parseCode))
+program
+  .command('minimise [sources...]')
+  .description('Cell source minimiser')
+  .action(sources => run(sources, minimiseCode))
 program
   .arguments('[sources...]')
   .action(sources => run(sources, makeEvaluator()))
@@ -33,7 +39,11 @@ try {
 }
 
 function* parseWithAstProcessors(tokens) {
-  const processors = program.opts().ast
+  const processors = []
+  if(program.opts().fold)
+    processors.push('fold')
+  if(program.opts().obfuscate)
+    processors.push('obfuscate')
 
   if (!processors)
     yield* parse(tokens)
@@ -53,6 +63,12 @@ function lexCode(code) {
 function parseCode(code) {
   for (const ast of parseWithAstProcessors(lex(code)))
     prettyPrint(ast)
+}
+
+function minimiseCode(code) {
+  for (const ast of parseWithAstProcessors(lex(code)))
+    minimise(ast)
+  console.log()
 }
 
 function evaluateCode(code, env) {

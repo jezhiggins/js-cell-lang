@@ -32,6 +32,7 @@
     "jest": "^27.1.0"
   },
   "dependencies": {
+    "btoa": "^1.2.1",
     "chalk": "^4.1.2",
     "commander": "^8.1.0"
   }

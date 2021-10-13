@@ -52,10 +52,10 @@ This repository is work in progress
 - [x] run file
 - [x] repl (functional, but needs polish)
 - [ ] fun things to do with the AST
-    - [ ] constant folding
+    - [x] constant folding
     - [x] obfuscation
-    - [x] pretty printing?
-    - [ ] minification?
+    - [x] AST pretty printing
+    - [x] minification
     - [ ] cross-compile to JS?
     - [ ] cross-compile to something else?
 
