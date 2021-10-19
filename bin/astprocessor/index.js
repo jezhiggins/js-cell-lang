@@ -14,24 +14,31 @@ function walkNode(expression, processor) {
 
   switch (type) {
     case 'assignment':
+      operand1 = walkNode(operand1, processor)
+      operand2 = walkNode(operand2, processor)
+      operand3 = walkNode(operand3, processor)
+      break;
     case 'operation':
-      operand1 = walkNode(operand1, processor);
-      operand2 = walkNode(operand2, processor);
-      operand3 = walkNode(operand3, processor);
+      operand2 = walkNode(operand2, processor)
+      operand3 = walkNode(operand3, processor)
       break;
     case 'function':
-      operand1 = operand1.map(o => walkNode(o, processor))
-      operand2 = operand2.map(o => walkNode(o, processor))
+      operand1 = walkContents(operand1, processor)
+      operand2 = walkContents(operand2, processor)
       break;
     case 'call':
-      operand1 = walkNode(operand1, processor);
-      operand2 = operand2.map(o => walkNode(o, processor))
+      operand1 = walkNode(operand1, processor)
+      operand2 = walkContents(operand2, processor)
       break;
   }
 
   expression = processor([type, operand1, operand2, operand3])
 
   return expression.filter(o => o)
+}
+
+function walkContents(operand, processor) {
+  return operand.map(o => walkNode(o, processor))
 }
 
 function astProcess(ast, processorName) {
