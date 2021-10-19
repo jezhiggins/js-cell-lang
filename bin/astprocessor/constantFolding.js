@@ -15,7 +15,7 @@ function constantFold(ast) {
       operand1,
       Number.parseFloat(lValue),
       Number.parseFloat(rValue)
-    )
+    ).toString()
   ]
 }
 
