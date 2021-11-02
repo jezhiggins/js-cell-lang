@@ -13,7 +13,7 @@ function expectParsed(input) {
 
 function expectFolded(input) {
   const folded = parsed(input).map(
-    ast => astProcess(ast, 'fold')
+    ast => astProcess(ast, ['fold'])
   )
   return expect(folded.length === 1 ? folded[0] : folded)
 }

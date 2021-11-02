@@ -8,13 +8,11 @@ import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
 import chalk from 'chalk'
-import { astProcess } from './astprocessor/index.js'
+import { astProcess, processNames } from './astprocessor/index.js'
 import { prettyPrint } from './astprinter/pretty.js'
 import { minimise } from "./astprinter/minimise.js";
 
-program
-  .option('--fold', 'Apply constant folding')
-  .option('--obfuscate')
+processNames.forEach(name => program.option(`--${name}`))
 
 program
   .command('lex [sources...]')
@@ -33,25 +31,16 @@ program
   .action(sources => run(sources, makeEvaluator()))
 
 try {
-  program.parse(process.arv)
+  program.parse(process.argv)
 } catch(e) {
   console.error(e)
 }
 
 function* parseWithAstProcessors(tokens) {
-  const processors = []
-  if(program.opts().fold)
-    processors.push('fold')
-  if(program.opts().obfuscate)
-    processors.push('obfuscate')
-
-  if (!processors)
-    yield* parse(tokens)
+  const processors = processNames.filter(p => program.opts()[p])
 
   for (let ast of parse(tokens)) {
-    for (const processor of processors)
-      ast = astProcess(ast, processor)
-    yield ast;
+    yield astProcess(ast, processors);
   }
 }
 

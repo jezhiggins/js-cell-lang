@@ -41,7 +41,7 @@ function walkContents(operand, processor) {
   return operand.map(o => walkNode(o, processor))
 }
 
-function astProcess(ast, processorName) {
+function applyProcess(ast, processorName) {
   const processor = processors[processorName]
   if (!processor)
     return ast;
@@ -49,4 +49,16 @@ function astProcess(ast, processorName) {
   return walkNode(ast, processor);
 }
 
-export { astProcess }
+function astProcess(ast, processNames)
+{
+  for (const name of processNames)
+    ast = applyProcess(ast, name)
+  return ast
+}
+
+const processNames = Object.keys(processors)
+
+export {
+  astProcess,
+  processNames
+}
