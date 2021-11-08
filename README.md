@@ -2,7 +2,7 @@
 
 Cell is a minimally simple programming language designed to demonstrate how to write a programming language. 
 
-Cell was designed by [Andy Balaam](http://www.artificialworlds.net/). His [original implementation is in Python](https://gitlab.com/cell_lang/cell). This repository is a new JavaScript implementation, written as the basis of a forthcoming talk to [Norfolk Developers](https://www.meetup.com/Norfolk-Developers-NorDev/), scheduled for October 2021. 
+Cell was designed by [Andy Balaam](http://www.artificialworlds.net/). His [original implementation is in Python](https://gitlab.com/cell_lang/cell). This repository is a new JavaScript implementation, written as the basis of a talk to [Norfolk Developers](https://www.meetup.com/Norfolk-Developers-NorDev/), scheduled for October 2021. 
 
 Here is an example program:
 
@@ -28,7 +28,7 @@ This prints:
 num1 does not equal num2.
 ```
 
-## Install
+## Build from Source
 
 ```
 git clone https://gitlab.com/jezhiggins/jscell.git
@@ -39,6 +39,15 @@ npm install
 npm run test              # - to run all the tests
 ```
 
+## Install from NPM
+
+```
+npm install cell-lang
+```
+or to run directly
+```
+npx cell-lang
+```
 
 
 ## Work in Progress
@@ -137,8 +146,9 @@ which is a set of standard values and functions that all programs can use.
 
 ## See also
 
-* [Video series about how to write a programming language](https://www.youtube.com/watch?v=TG0qRDrUPpA&list=PLgyU3jNA6VjT3FW83eHqryNcqd6fsvdrv)
-* [Articles on how to write a programming language](https://github.com/andybalaam/articles-how-to-write-a-programming-language/) (now published in the [Overload](https://accu.org/index.php/journals/c78/) journal issues 145, 146 and 147).
+* [Down to the Metal](https://www.jezuk.co.uk/blog/2021/10/down-to-the-metal.html), the talk I gave featuring this code.
+* Andy's [video series about how to write a programming language](https://www.youtube.com/watch?v=TG0qRDrUPpA&list=PLgyU3jNA6VjT3FW83eHqryNcqd6fsvdrv)
+* [Articles on how to write a programming language](https://github.com/andybalaam/articles-how-to-write-a-programming-language/), also published in the [Overload](https://accu.org/index.php/journals/c78/) journal issues 145, 146 and 147.
 * [Andy's ACCU Conference talk about Cell](https://www.youtube.com/watch?v=82-XjMzKaC8)
 * [Slides for the videos](https://github.com/andybalaam/videos-writing-cell)
 

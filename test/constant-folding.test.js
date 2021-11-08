@@ -16,10 +16,8 @@ function expectParsed(input) {
 }
 
 async function fold(input) {
-  const ast = await parsed(input)
-  const folded = ast.map(
-    ast => astProcess(ast, ['fold'])
-  )
+  const asts = await parsed(input)
+  const folded = await Promise.all(asts.map(ast => astProcess(ast, ['fold'])))
   return folded.length === 1 ? folded[0] : folded
 }
 
