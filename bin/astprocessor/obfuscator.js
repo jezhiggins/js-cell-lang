@@ -3,17 +3,23 @@ import { Environment } from '../../lib/environment.js'
 import pkg from 'btoa'
 const btoa = pkg
 
-const nameMap = new Map();
+async function loadStandardNames() {
+  const env = await loadStandardLibrary(new Environment())
 
-loadStandardLibrary(new Environment()).then(env => {
-  for (const key of Object.keys(env.vars_))
-    nameMap.set(key, key);
-})
+  const nameMap = new Map();
+  Object.keys(env.vars_).forEach(key => nameMap.set(key, key))
 
+  return nameMap
+}
 
-function obfuscator(ast) {
+async function obfuscator(ast) {
+  const nameMap = await loadStandardNames()
+  return obfuscate(ast, nameMap)
+}
+
+function obfuscate(ast, nameMap) {
   if (isCallingSet(ast))
-    return obfuscateSetCall(ast)
+    return obfuscateSetCall(ast, nameMap)
   if (ast && ast[0] !== 'symbol')
     return ast
 
@@ -35,12 +41,12 @@ function isCallingSet(ast) {
   return ast && ast[0] === 'call' && ast[1][0] === 'symbol' && ast[1][1] === 'set';
 }
 
-function obfuscateSetCall(ast) {
+function obfuscateSetCall(ast, nameMap) {
   const [, fnName, [varName, ...rest]] = ast
   return ['call',
     fnName,
     [
-      [ 'string', obfuscator(['symbol', varName[1]])[1] ],
+      [ 'string', obfuscator(['symbol', varName[1]], nameMap)[1] ],
       ...rest
     ]
   ]

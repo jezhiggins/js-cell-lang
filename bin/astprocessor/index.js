@@ -6,7 +6,7 @@ const processors = {
   'obfuscate': obfuscator
 }
 
-function walkNode(expression, processor) {
+async function walkNode(expression, processor) {
   if (!expression)
     return expression
 
@@ -14,45 +14,45 @@ function walkNode(expression, processor) {
 
   switch (type) {
     case 'assignment':
-      operand1 = walkNode(operand1, processor)
-      operand2 = walkNode(operand2, processor)
-      operand3 = walkNode(operand3, processor)
+      operand1 = await walkNode(operand1, processor)
+      operand2 = await walkNode(operand2, processor)
+      operand3 = await walkNode(operand3, processor)
       break;
     case 'operation':
-      operand2 = walkNode(operand2, processor)
-      operand3 = walkNode(operand3, processor)
+      operand2 = await walkNode(operand2, processor)
+      operand3 = await walkNode(operand3, processor)
       break;
     case 'function':
-      operand1 = walkContents(operand1, processor)
-      operand2 = walkContents(operand2, processor)
+      operand1 = await walkContents(operand1, processor)
+      operand2 = await walkContents(operand2, processor)
       break;
     case 'call':
-      operand1 = walkNode(operand1, processor)
-      operand2 = walkContents(operand2, processor)
+      operand1 = await walkNode(operand1, processor)
+      operand2 = await walkContents(operand2, processor)
       break;
   }
 
-  expression = processor([type, operand1, operand2, operand3])
+  expression = await processor([type, operand1, operand2, operand3])
 
   return expression.filter(o => o)
 }
 
 function walkContents(operand, processor) {
-  return operand.map(o => walkNode(o, processor))
+  return Promise.all(operand.map(o => walkNode(o, processor)))
 }
 
-function applyProcess(ast, processorName) {
+async function applyProcess(ast, processorName) {
   const processor = processors[processorName]
   if (!processor)
     return ast;
 
-  return walkNode(ast, processor);
+  return await walkNode(ast, processor);
 }
 
-function astProcess(ast, processNames)
+async function astProcess(ast, processNames)
 {
   for (const name of processNames)
-    ast = applyProcess(ast, name)
+    ast = await applyProcess(ast, name)
   return ast
 }
 

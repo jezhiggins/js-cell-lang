@@ -45,7 +45,7 @@ async function* parseWithAstProcessors(code) {
   const processors = processNames.filter(p => program.opts()[p])
 
   for await (let ast of parse(lex(code))) {
-    yield astProcess(ast, processors);
+    yield await astProcess(ast, processors);
   }
 }
 
