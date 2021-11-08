@@ -2,47 +2,55 @@ import { lex } from '../lib/lexer.js'
 import { parse } from '../lib/parser.js'
 import { astProcess } from '../bin/astprocessor'
 
-function parsed(input) {
-  return [...parse(lex(input))]
+async function parsed(input) {
+  const asts = []
+  for await (const ast of parse(lex(input))) {
+    asts.push(ast)
+  }
+  return asts
 }
 
 function expectParsed(input) {
-  const result = parsed(input)
-  return expect(result.length === 1 ? result[0] : result)
+  const result = parsed(input).then(r => r.length === 1 ? r[0] : r)
+  return expect(result)
 }
 
-function expectFolded(input) {
-  const folded = parsed(input).map(
+async function fold(input) {
+  const ast = await parsed(input)
+  const folded = ast.map(
     ast => astProcess(ast, ['fold'])
   )
-  return expect(folded.length === 1 ? folded[0] : folded)
+  return folded.length === 1 ? folded[0] : folded
 }
 
 describe('constant folding', () => {
-  it ('1 + 2', () => {
+  it ('1 + 2', async () => {
     const expression = '1 + 2;'
 
-    expectParsed(expression)
+    await expectParsed(expression).resolves
       .toEqual(['operation', '+', ['number', '1'], ['number', '2']])
-    expectFolded(expression)
-      .toEqual(['number', '3']);
+
+    const foldedExpression = await fold(expression)
+    expect(foldedExpression).toEqual(['number', '3']);
   })
 
-  it ('1 + 2 * 3;', () => {
+  it ('1 + 2 * 3;', async () => {
     const expression = '1 + 2 * 3;'
 
-    expectParsed(expression)
+    await expectParsed(expression).resolves
       .toEqual(['operation', '+', ['number', '1'], ['operation', '*', ['number', '2'], ['number', '3']]])
-    expectFolded(expression)
-      .toEqual(['number', '7']);
+
+    const foldedExpression = await fold(expression)
+    expect(foldedExpression).toEqual(['number', '7']);
   })
 
-  it ('a = 1 + 2;', () => {
+  it ('a = 1 + 2;', async () => {
     const expression = 'a = 1 + 2;'
 
-    expectParsed(expression)
+    await expectParsed(expression).resolves
       .toEqual(['assignment', ['symbol', 'a'], ['operation', '+', ['number', '1'], ['number', '2']]])
-    expectFolded(expression)
-      .toEqual(['assignment', ['symbol', 'a'], ['number', '3']]);
+
+    const foldedExpression = await fold(expression)
+    expect(foldedExpression).toEqual(['assignment', ['symbol', 'a'], ['number', '3']]);
   })
 })

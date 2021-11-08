@@ -12,6 +12,11 @@ import { astProcess, processNames } from './astprocessor/index.js'
 import { prettyPrint } from './astprinter/pretty.js'
 import { minimise } from "./astprinter/minimise.js";
 
+process.on("unhandledRejection", error => {
+  console.error(error); // This prints error with stack included (as for normal errors)
+  throw error; // Following best practices re-throw error and let the process exit with error code
+})
+
 processNames.forEach(name => program.option(`--${name}`))
 
 program
@@ -36,32 +41,32 @@ try {
   console.error(e)
 }
 
-function* parseWithAstProcessors(tokens) {
+async function* parseWithAstProcessors(code) {
   const processors = processNames.filter(p => program.opts()[p])
 
-  for (let ast of parse(tokens)) {
+  for await (let ast of parse(lex(code))) {
     yield astProcess(ast, processors);
   }
 }
 
-function lexCode(code) {
-  for (const token of lex(code))
+async function lexCode(code) {
+  for await (const token of lex(code))
     console.log(` [ ${chalk.yellow(token[0])}, '${chalk.green(token[1])}' ]`)
 }
 
-function parseCode(code) {
-  for (const ast of parseWithAstProcessors(lex(code)))
+async function parseCode(code) {
+  for await (const ast of parseWithAstProcessors(code))
     prettyPrint(ast)
 }
 
-function minimiseCode(code) {
-  for (const ast of parseWithAstProcessors(lex(code)))
+async function minimiseCode(code) {
+  for await (const ast of parseWithAstProcessors(code))
     minimise(ast)
   console.log()
 }
 
 function evaluateCode(code, env) {
-  return evaluate(parseWithAstProcessors(lex(code)), env)
+  return evaluate(parseWithAstProcessors(code), env)
 }
 
 function makeEvaluator() {
@@ -88,8 +93,8 @@ function runFiles(files, runFn) {
 }
 
 function runRepl(runFn) {
-  const evalCell = (cmd, context, filename, callback) => {
-    callback(null, runFn(cmd))
+  const evalCell = async (cmd, context, filename, callback) => {
+    callback(null, await runFn(cmd))
   }
 
   repl.start({ prompt: '>>> ', eval: evalCell });

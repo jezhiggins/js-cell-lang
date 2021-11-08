@@ -6,97 +6,93 @@ function expectEval(input) {
   return expect(evaluate(parse(lex(input))))
 }
 
-function expectEvalToThrow(input, error) {
-  return expect(() => expectEval(input)).toThrow(error)
-}
-
 describe('evaluator', () => {
-  it('evaluating an empty program gives none', () => {
-    expectEval("").toEqual(['none', null])
+  it('evaluating an empty program gives none', async () => {
+    await expectEval("").resolves.toEqual(['none', null])
   })
 
-  it('evaluating a primitive returns itself', () => {
-    expectEval('3;').toEqual(['number', 3])
-    expectEval('3.1;').toEqual(['number', 3.1])
-    expectEval('"fruit";').toEqual(['string', 'fruit'])
+  it('evaluating a primitive returns itself', async () => {
+    await expectEval('3;').resolves.toEqual(['number', 3])
+    await expectEval('3.1;').resolves.toEqual(['number', 3.1])
+    await expectEval('"fruit";').resolves.toEqual(['string', 'fruit'])
   })
 
-  it('arithmetic expressions come out correct', () => {
-    expectEval('3 + 4;').toEqual(['number', 7])
-    expectEval('3 - 4;').toEqual(['number', -1])
-    expectEval('3 * 4;').toEqual(['number', 12])
-    expectEval('3 / 4;').toEqual(['number', 0.75])
+  it('arithmetic expressions come out correct', async () => {
+    await expectEval('3 + 4;').resolves.toEqual(['number', 7])
+    await expectEval('3 - 4;').resolves.toEqual(['number', -1])
+    await expectEval('3 * 4;').resolves.toEqual(['number', 12])
+    await expectEval('3 / 4;').resolves.toEqual(['number', 0.75])
   })
 
-  it('referring to an unknown symbol is an error', () => {
-    expectEvalToThrow('x;', 'Unknown symbol \'x\'.')
+  it('referring to an unknown symbol is an error', async () => {
+    await expectEval('x;').rejects.toEqual('Unknown symbol \'x\'.')
   })
 
-  it('can define a value and retrieve it', () => {
-    expectEval('x = 30; x;').toEqual(['number', 30])
-    expectEval('y = \'foo\'; y;').toEqual(['string', 'foo'])
+  it('can define a value and retrieve it', async () => {
+    await expectEval('x = 30; x;').resolves.toEqual(['number', 30])
+    await expectEval('y = \'foo\'; y;').resolves.toEqual(['string', 'foo'])
   })
 
-  it('modifying a value is an error', () => {
-    expectEvalToThrow('x = 30; x = 10;', 'Not allowed to re-assign symbol \'x\'.')
+  it('modifying a value is an error', async () => {
+    await expectEval('x = 30; x = 10;').rejects.toEqual('Not allowed to re-assign symbol \'x\'.')
   })
 
-  it('value of an assignment is the value assigned', () => {
-    expectEval('x = 31;').toEqual(["number", 31])
+  it('value of an assignment is the value assigned', async () => {
+    await expectEval('x = 31;').resolves.toEqual(["number", 31])
   })
 
-  it('calling a function returns its lat value', () => {
-    expectEval('{ 10; 11; }();').toEqual(['number', 11])
+  it('calling a function returns its lat value', async () => {
+    await expectEval('{ 10; 11; }();').resolves.toEqual(['number', 11])
   })
 
-  it('body of a function can use arg values', () => {
-    expectEval('{:(x, y) x + y;}(100, 1);').toEqual(['number', 101])
+  it('body of a function can use arg values', async () => {
+    await expectEval('{:(x, y) x + y;}(100, 1);').resolves.toEqual(['number', 101])
   })
 
-  it('can hold a reference to a function and call it', () => {
-    expectEval(`
+  it('can hold a reference to a function and call it', async () => {
+    await expectEval(`
       add = {:(x, y) x + y;};
       add(20, 2.2);
-    `).toEqual(['number', 22.2])
+    `).resolves.toEqual(['number', 22.2])
   })
 
-  it('a symbol has different life inside and outside a function', () => {
+  it('a symbol has different life inside and outside a function', async () => {
     /* Define a symbol outside a function, redefine inside,
        then evaluate outside.  What happened inside the
        function should not affect the value outside. */
-    expectEval(`
+    await expectEval(`
       dog = 'cat';
       {dog = 3;}();
       dog;
-    `).toEqual(['string', 'cat'])
+    `).resolves.toEqual(['string', 'cat'])
   })
 
-  it('a symbol within a function has the local value', () => {
-    expectEval(`
+  it('a symbol within a function has the local value', async () => {
+    await expectEval(`
       dog = 3;
       cat = {dog = 77;dog;}();
       cat;
-    `).toEqual(['number', 77])
+    `).resolves.toEqual(['number', 77])
   })
 
-  it('wrong number of arguments to a function is an error', () => {
-    expectEvalToThrow('{}(3);', '1 arguments passed to function (\'function\', [], []), but it requires 0 arguments.')
-    expectEvalToThrow('x = {:(a,b,c)}; x(3, 2);', '2 arguments passed to function (\'symbol\', \'x\'), but it requires 3 arguments.')
+  it('wrong number of arguments to a function is an error', async () => {
+    await expectEval('{}(3);').rejects.toEqual('1 arguments passed to function (\'function\', [], []), but it requires 0 arguments.')
+    await expectEval('x = {:(a,b,c)}; x(3, 2);').rejects.toEqual('2 arguments passed to function (\'symbol\', \'x\'), but it requires 3 arguments.')
   })
 
-  it('function arguments are independent', () => {
-    expectEval(`
+  it('function arguments are independent', async () => {
+    await expectEval(`
       fn = {:(x) {x;};};
       a = fn("a");
       b = fn("b");
       a();
-    `).toEqual(['string', 'a'])
-    expectEval(`
+    `).resolves.toEqual(['string', 'a'])
+    await expectEval(`
       fn = {:(x) {x;};};
       a = fn("a");
       b = fn("b");
       b();
-    `).toEqual(['string', 'b'])
+    `).resolves.toEqual(['string', 'b'])
   })
 })
 

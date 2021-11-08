@@ -5,12 +5,11 @@ const btoa = pkg
 
 const nameMap = new Map();
 
-{
-  const env = new Environment()
-  loadStandardLibrary(env)
+loadStandardLibrary(new Environment()).then(env => {
   for (const key of Object.keys(env.vars_))
     nameMap.set(key, key);
-}
+})
+
 
 function obfuscator(ast) {
   if (isCallingSet(ast))
