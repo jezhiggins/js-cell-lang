@@ -1,4 +1,3 @@
-import chalk from "chalk";
 
 function minimiseNode(node) {
   const [type, operand1, operand2, operand3] = node
@@ -12,7 +11,6 @@ function minimiseNode(node) {
       return minimiseNode(operand1) + '=' + minimiseNode(operand2)
     case 'call':
       return minimiseNode(operand1) + '(' + operand2.map(o => minimiseNode(o)).join(',') + ')'
-      break;
     case 'operation':
       return minimiseNode(operand2) + operand1 + minimiseNode(operand3)
     case 'function':

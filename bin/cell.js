@@ -7,10 +7,9 @@ import { parse } from '../lib/parser.js'
 import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
-import chalk from 'chalk'
 import { astProcess, processNames } from './astprocessor/index.js'
-import { prettyPrint } from './astprinter/pretty.js'
-import { minimise } from "./astprinter/minimise.js";
+import { lexMode } from './mode/lex-mode.js'
+import { parseMode, minimiseMode } from './mode/parse-modes.js'
 
 process.on("unhandledRejection", error => {
   console.error(error); // This prints error with stack included (as for normal errors)
@@ -22,18 +21,18 @@ processNames.forEach(name => program.option(`--${name}`))
 program
   .command('lex [sources...]')
   .description('Display the tokenized program source')
-  .action(sources => run(sources, lexCode))
+  .action(sources => run(lexMode, sources))
 program
   .command('parse [sources...]')
   .description('Display the program\'s AST')
-  .action(sources => run(sources, parseCode))
+  .action(sources  => run(parseMode, sources, program.opts()))
 program
   .command('minimise [sources...]')
   .description('Cell source minimiser')
-  .action(sources => run(sources, minimiseCode))
+  .action(sources => run(minimiseMode, sources, program.opts()))
 program
   .arguments('[sources...]')
-  .action(sources => run(sources, makeEvaluator()))
+  .action(sources => run(makeEvaluator(), sources))
 
 try {
   program.parse(process.argv)
@@ -49,22 +48,6 @@ async function* parseWithAstProcessors(code) {
   }
 }
 
-async function lexCode(code) {
-  for await (const token of lex(code))
-    console.log(` [ ${chalk.yellow(token[0])}, '${chalk.green(token[1])}' ]`)
-}
-
-async function parseCode(code) {
-  for await (const ast of parseWithAstProcessors(code))
-    prettyPrint(ast)
-}
-
-async function minimiseCode(code) {
-  for await (const ast of parseWithAstProcessors(code))
-    minimise(ast)
-  console.log()
-}
-
 function evaluateCode(code, env) {
   return evaluate(parseWithAstProcessors(code), env)
 }
@@ -74,30 +57,30 @@ function makeEvaluator() {
   return code => evaluateCode(code, env);
 }
 
-function run(sources, runFn) {
+function run(runFn, sources, options) {
   if (sources.length === 0)
-    runRepl(runFn)
+    runRepl(runFn, options)
   else
-    runFiles(sources, runFn)
+    runFiles(runFn, sources, options)
 }
 
-function runFiles(files, runFn) {
+function runFiles(runFn, files, options) {
   for (const file of files) {
     if (file === '-')
-      runRepl(runFn)
+      runRepl(runFn, options)
     else {
       const code = readFileSync(file).toString()
-      runFn(code)
+      runFn(code, options)
     }
   }
 }
 
-function runRepl(runFn) {
+function runRepl(runFn, options) {
   const evalCell = async (cmd, context, filename, callback) => {
-    callback(null, await runFn(cmd))
+    callback(null, await runFn(cmd, options))
   }
 
-  repl.start({ prompt: '>>> ', eval: evalCell });
+  repl.start({ prompt: '>>> ', eval: evalCell, ignoreUndefined: true});
 }
 
 
