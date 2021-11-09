@@ -9,5 +9,7 @@ async function lexMode(code) {
     console.error(chalk.magentaBright(`Lexing error: ${msg}`))
   }
 }
+lexMode.command = 'lex [sources...]'
+lexMode.description = 'Display the tokenized program source'
 
 export { lexMode }

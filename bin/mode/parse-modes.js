@@ -16,11 +16,15 @@ async function parseMode(code, options) {
   for await (const ast of parseWithAstProcessors(code, options))
     prettyPrint(ast)
 }
+parseMode.command = 'parse [sources...]'
+parseMode.description = 'Display the program\'s AST'
 
 async function minimiseMode(code, options) {
   for await (const ast of parseWithAstProcessors(code, options))
     minimise(ast)
   console.log()
 }
+minimiseMode.command = 'minimise [sources...]'
+minimiseMode.description = 'Cell source minimiser'
 
 export { parseMode, minimiseMode }

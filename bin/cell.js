@@ -8,8 +8,7 @@ import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
 import { astProcess, processNames } from './astprocessor/index.js'
-import { lexMode } from './mode/lex-mode.js'
-import { parseMode, minimiseMode } from './mode/parse-modes.js'
+import { cellModes } from './mode/index.js'
 
 process.on("unhandledRejection", error => {
   console.error(error); // This prints error with stack included (as for normal errors)
@@ -18,18 +17,13 @@ process.on("unhandledRejection", error => {
 
 processNames.forEach(name => program.option(`--${name}`))
 
-program
-  .command('lex [sources...]')
-  .description('Display the tokenized program source')
-  .action(sources => run(lexMode, sources))
-program
-  .command('parse [sources...]')
-  .description('Display the program\'s AST')
-  .action(sources  => run(parseMode, sources, program.opts()))
-program
-  .command('minimise [sources...]')
-  .description('Cell source minimiser')
-  .action(sources => run(minimiseMode, sources, program.opts()))
+cellModes.forEach(mode =>
+  program
+    .command(mode.command)
+    .description(mode.description)
+    .action(sources => run(mode, sources, program.opts()))
+)
+
 program
   .arguments('[sources...]')
   .action(sources => run(makeEvaluator(), sources))
@@ -43,9 +37,8 @@ try {
 async function* parseWithAstProcessors(code) {
   const processors = processNames.filter(p => program.opts()[p])
 
-  for await (let ast of parse(lex(code))) {
-    yield astProcess(ast, processors);
-  }
+  for await (let ast of parse(lex(code))) 
+    yield astProcess(ast, processors)
 }
 
 function evaluateCode(code, env) {
