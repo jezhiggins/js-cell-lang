@@ -1,14 +1,11 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'fs'
-import { topLevelEnvironment } from '../lib/environment.js';
-import { evaluate } from '../lib/evaluator.js'
-import { parse } from '../lib/parser.js'
-import { lex } from '../lib/lexer.js'
 import repl from 'repl'
 import { program } from 'commander/esm.mjs'
-import { astProcess, processNames } from './astprocessor/index.js'
+import { processNames } from './astprocessor/index.js'
 import { cellModes } from './mode/index.js'
+import { executeMode } from "./mode/execute-mode.js";
 
 processNames.forEach(name => program.option(`--${name}`))
 
@@ -21,29 +18,12 @@ cellModes.forEach(mode =>
 
 program
   .arguments('[sources...]')
-  .action(sources => run(makeEvaluator(), sources))
+  .action(sources => run(executeMode, sources, program.opts()))
 
 try {
   program.parse(process.argv)
 } catch(e) {
   console.error(e)
-}
-
-function* parseWithAstProcessors(tokens) {
-  const processors = processNames.filter(p => program.opts()[p])
-
-  for (let ast of parse(tokens)) {
-    yield astProcess(ast, processors);
-  }
-}
-
-function evaluateCode(code, env) {
-  return evaluate(parseWithAstProcessors(lex(code)), env)
-}
-
-function makeEvaluator() {
-  const env = topLevelEnvironment();
-  return code => evaluateCode(code, env);
 }
 
 function run(runFn, sources, options) {
