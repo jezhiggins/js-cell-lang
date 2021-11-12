@@ -3,24 +3,39 @@ import { parse } from '../../lib/parser.js'
 import { lex } from '../../lib/lexer.js'
 import { prettyPrint } from '../astprinter/pretty.js'
 import { minimise } from '../astprinter/minimise.js'
+import chalk from "chalk";
 
-async function* parseWithAstProcessors(code, options) {
-  const processors = processNames.filter(p => options[p])
-
-  for await (let ast of parse(lex(code))) {
-    yield await astProcess(ast, processors);
+function fullyLex(code) {
+  try {
+    return [...lex(code)]
+  } catch(msg) {
+    console.error(chalk.magentaBright(`Lexing error: ${msg}`))
+    return []
   }
 }
 
-async function parseMode(code, options) {
-  for await (const ast of parseWithAstProcessors(code, options))
+function* parseWithAstProcessors(code, options) {
+  try {
+    const processors = processNames.filter(p => options[p])
+
+    for (const ast of parse(fullyLex(code))) {
+      yield astProcess(ast, processors);
+    }
+  } catch(msg) {
+    console.error(chalk.magentaBright(`Parsing error: ${msg}`))
+    return []
+  }
+}
+
+function parseMode(code, options) {
+  for (const ast of parseWithAstProcessors(code, options))
     prettyPrint(ast)
 }
 parseMode.command = 'parse [sources...]'
 parseMode.description = 'Display the program\'s AST'
 
-async function minimiseMode(code, options) {
-  for await (const ast of parseWithAstProcessors(code, options))
+function minimiseMode(code, options) {
+  for (const ast of parseWithAstProcessors(code, options))
     minimise(ast)
   console.log()
 }

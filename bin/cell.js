@@ -10,11 +10,6 @@ import { program } from 'commander/esm.mjs'
 import { astProcess, processNames } from './astprocessor/index.js'
 import { cellModes } from './mode/index.js'
 
-process.on("unhandledRejection", error => {
-  console.error(error); // This prints error with stack included (as for normal errors)
-  throw error; // Following best practices re-throw error and let the process exit with error code
-})
-
 processNames.forEach(name => program.option(`--${name}`))
 
 cellModes.forEach(mode =>
@@ -34,15 +29,16 @@ try {
   console.error(e)
 }
 
-async function* parseWithAstProcessors(code) {
+function* parseWithAstProcessors(tokens) {
   const processors = processNames.filter(p => program.opts()[p])
 
-  for await (let ast of parse(lex(code))) 
-    yield astProcess(ast, processors)
+  for (let ast of parse(tokens)) {
+    yield astProcess(ast, processors);
+  }
 }
 
 function evaluateCode(code, env) {
-  return evaluate(parseWithAstProcessors(code), env)
+  return evaluate(parseWithAstProcessors(lex(code)), env)
 }
 
 function makeEvaluator() {
@@ -69,8 +65,8 @@ function runFiles(runFn, files, options) {
 }
 
 function runRepl(runFn, options) {
-  const evalCell = async (cmd, context, filename, callback) => {
-    callback(null, await runFn(cmd, options))
+  const evalCell = (cmd, context, filename, callback) => {
+    callback(null, runFn(cmd, options))
   }
 
   repl.start({ prompt: '>>> ', eval: evalCell, ignoreUndefined: true});

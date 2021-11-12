@@ -1,67 +1,63 @@
 import { peekableStream } from '../lib/util/peekable-stream.js'
 import { lex } from '../lib/lexer.js'
 
-function stream(input) {
-  return gather(peekableStream(input))
-}
-
-async function gather(s) {
-  const arr = []
-  for await (const c of s) {
-    arr.push(c)
-  }
-  return arr
-}
-
 describe('peekable stream', () => {
-  it('empty string returns nothing', async () => {
-    await expect(stream('')).resolves.toEqual([])
+  it('empty string returns nothing', () => {
+    expect([...peekableStream('')]).toEqual([])
   })
 
-  it('forward traverse splits string into characters', async () => {
-    await expect(stream('fruit')).resolves.toEqual(['f', 'r', 'u', 'i', 't'])
+  it('forward traverse splits string into characters', () => {
+    expect([...peekableStream('fruit')]).toEqual(['f', 'r', 'u', 'i', 't'])
   })
 
-  it('peeking returns same character each time, does not affect iteration', async () => {
+  it('peeking returns same character each time, does not affect iteration', () => {
     const stream = peekableStream('fruit')
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'f' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'f' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'f' })
-    await expect(gather(stream)).resolves.toEqual(['f', 'r', 'u', 'i', 't'])
+    expect(stream.peek()).toEqual({ done: false, value: 'f' })
+    expect(stream.peek()).toEqual({ done: false, value: 'f' })
+    expect(stream.peek()).toEqual({ done: false, value: 'f' })
+    expect([...stream]).toEqual(['f', 'r', 'u', 'i', 't'])
   })
 
-  it('can peek each character', async () => {
+  it('can peek each character', () => {
     const stream = peekableStream('fruit')
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'f' })
-    await expect(stream.next()).resolves.toEqual({ done: false, value: 'f' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'r' })
-    await expect(stream.next()).resolves.toEqual({ done: false, value: 'r' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'u' })
-    await expect(stream.next()).resolves.toEqual({ done: false, value: 'u' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 'i' })
-    await expect(stream.next()).resolves.toEqual({ done: false, value: 'i' })
-    await expect(stream.peek()).resolves.toEqual({ done: false, value: 't' })
-    await expect(stream.next()).resolves.toEqual({ done: false, value: 't' })
-    await expect(stream.peek()).resolves.toEqual({ done: true })
+    expect(stream.peek()).toEqual({ done: false, value: 'f' })
+    expect(stream.next()).toEqual({ done: false, value: 'f' })
+    expect(stream.peek()).toEqual({ done: false, value: 'r' })
+    expect(stream.next()).toEqual({ done: false, value: 'r' })
+    expect(stream.peek()).toEqual({ done: false, value: 'u' })
+    expect(stream.next()).toEqual({ done: false, value: 'u' })
+    expect(stream.peek()).toEqual({ done: false, value: 'i' })
+    expect(stream.next()).toEqual({ done: false, value: 'i' })
+    expect(stream.peek()).toEqual({ done: false, value: 't' })
+    expect(stream.next()).toEqual({ done: false, value: 't' })
+    expect(stream.peek()).toEqual({ done: true })
   })
 
-  it('can peek the lexed token stream', async () => {
+  it('can peek the lexed token stream', () => {
     const tokens = peekableStream(lex('12 + 12'))
-    await expect(tokens.next()).resolves.toEqual({ done: false, value: ['number', '12']})
-    await expect(tokens.next()).resolves.toEqual({ done: false, value: ['operation', '+']})
-    await expect(tokens.next()).resolves.toEqual({ done: false, value: ['number', '12']})
-    await expect(tokens.next()).resolves.toEqual({ done: true })
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: false, value: ['operation', '+']})
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: true })
   })
 
-  it('can peek an array', async () => {
+  it('can peek the lexed token stream', () => {
+    const tokens = peekableStream(lex('12 + 12'))
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: false, value: ['operation', '+']})
+    expect(tokens.next()).toEqual({ done: false, value: ['number', '12']})
+    expect(tokens.next()).toEqual({ done: true })
+  })
+
+  it('can peek an array', () => {
     const n = peekableStream([1,2,3])
-    await expect(n.peek()).resolves.toEqual({ done: false, value: 1 })
-    await expect(n.next()).resolves.toEqual({ done: false, value: 1 })
-    await expect(n.peek()).resolves.toEqual({ done: false, value: 2 })
-    await expect(n.next()).resolves.toEqual({ done: false, value: 2 })
-    await expect(n.peek()).resolves.toEqual({ done: false, value: 3 })
-    await expect(n.next()).resolves.toEqual({ done: false, value: 3 })
-    await expect(n.peek()).resolves.toEqual({ done: true })
-    await expect(n.next()).resolves.toEqual({ done: true })
+    expect(n.peek()).toEqual({ done: false, value: 1 })
+    expect(n.next()).toEqual({ done: false, value: 1 })
+    expect(n.peek()).toEqual({ done: false, value: 2 })
+    expect(n.next()).toEqual({ done: false, value: 2 })
+    expect(n.peek()).toEqual({ done: false, value: 3 })
+    expect(n.next()).toEqual({ done: false, value: 3 })
+    expect(n.peek()).toEqual({ done: true })
+    expect(n.next()).toEqual({ done: true })
   })
 })

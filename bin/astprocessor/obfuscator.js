@@ -3,8 +3,8 @@ import { Environment } from '../../lib/environment.js'
 import pkg from 'btoa'
 const btoa = pkg
 
-async function loadStandardNames() {
-  const env = await loadStandardLibrary(new Environment())
+function loadStandardNames() {
+  const env = loadStandardLibrary(new Environment())
 
   const nameMap = new Map();
   Object.keys(env.vars_).forEach(key => nameMap.set(key, key))
@@ -12,8 +12,8 @@ async function loadStandardNames() {
   return nameMap
 }
 
-async function obfuscator(ast) {
-  const nameMap = await loadStandardNames()
+function obfuscator(ast) {
+  const nameMap = loadStandardNames()
   return obfuscate(ast, nameMap)
 }
 
