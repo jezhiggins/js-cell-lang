@@ -1,13 +1,16 @@
 import { lex } from '../lib/lexer.js'
 import { parse } from '../lib/parser.js'
 import { evaluate } from '../lib/evaluator.js'
+import { RuntimeError } from '../lib/util/errors.js'
 
 function expectEval(input) {
   return expect(evaluate(parse(lex(input))))
 }
 
 function expectEvalToThrow(input, error) {
-  return expect(() => expectEval(input)).toThrow(error)
+  const testCase = () => expectEval(input)
+  expect(testCase).toThrow(error)
+  expect(testCase).toThrow(RuntimeError)
 }
 
 describe('evaluator', () => {
