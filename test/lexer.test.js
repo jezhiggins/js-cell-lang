@@ -1,4 +1,5 @@
 import { lex } from '../lib/lexer.js'
+import { SyntaxError } from '../lib/util/errors.js'
 
 function lexed(input) {
   return [...lex(input)]
@@ -7,6 +8,12 @@ function lexed(input) {
 function expectLexed(input) {
   const result = lexed(input)
   return expect(result.length == 1 ? result[0] : result)
+}
+
+function badLex(input, expected) {
+  const testCase = () => lexed(input)
+  expect(testCase).toThrow(expected)
+  expect(testCase).toThrow(SyntaxError)
 }
 
 describe('lexer', () => {
@@ -98,8 +105,7 @@ describe('lexer', () => {
   })
 
   it('an unfinished string is an error', () => {
-    expect(() => lexed('"foo')).
-      toThrow("A string ran off the end of the program.")
+    badLex('"foo', 'A string ran off the end of the program.')
   })
 
   it('commas produce comma tokens', () => {
@@ -126,13 +132,11 @@ describe('lexer', () => {
   })
 
   it('tabs are an error', () => {
-    expect(() => lexed('aaa\tbbb')).
-      toThrow("Tab characters are not allowed in Cell.")
+    badLex('aaa\tbbb', 'Tab characters are not allowed in Cell.')
   })
 
   it('other characters are an error', () => {
-    expect(() => lexed('!')).
-      toThrow('Unrecognised character - !')
+    badLex('!', 'Unrecognised character - !')
   })
 
   it('multiple token types can be combined', () => {

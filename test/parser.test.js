@@ -1,5 +1,6 @@
 import { lex } from '../lib/lexer.js'
 import { parse } from '../lib/parser.js'
+import { SyntaxError } from '../lib/util/errors.js'
 
 function parsed(input) {
   return [...parse(lex(input))]
@@ -10,8 +11,10 @@ function expectParsed(input) {
   return expect(result.length === 1 ? result[0] : result)
 }
 
-function badParse(input) {
-  return expect(() => parsed(input))
+function badParse(input, expected) {
+  const testCase = () => parsed(input)
+  expect(testCase).toThrow(expected)
+  expect(testCase).toThrow(SyntaxError)
 }
 
 describe('parser', () => {
@@ -28,8 +31,7 @@ describe('parser', () => {
   })
 
   it('missing semicolon is an error', () => {
-    expect(() => parsed('56')).
-      toThrow('Hit end of file - expected \';\'.')
+    badParse('56', 'Hit end of file - expected \';\'.')
   })
 
   it('sum of numbers is parsed as expression', () => {
@@ -53,13 +55,11 @@ describe('parser', () => {
   })
 
   it('assigning to a number is an error', () => {
-    expect(() => parsed('3 = x;'))
-      .toThrow('You can\'t assign to anything except a symbol.')
+    badParse('3 = x;', 'You can\'t assign to anything except a symbol.')
   })
 
   it('assigning to an expression is an error', () => {
-    expect(() => parsed('x(4) = 5;'))
-      .toThrow('You can\'t assign to anything except a symbol.')
+    badParse('x(4) = 5;', 'You can\'t assign to anything except a symbol.')
   })
 
   it('function call with no args gets parsed', () => {
@@ -141,8 +141,7 @@ describe('parser', () => {
   })
 
   it('missing param definition with colon is an error', () => {
-    expect(() => parsed('{:print(x););'))
-      .toThrow('\':\' must be followed by \'(\' in a function.')
+    badParse('{:print(x););', '\':\' must be followed by \'(\' in a function.')
   })
 
   it('multiple commands parse into multiple expressions', () => {
@@ -213,11 +212,11 @@ describe('parser', () => {
   })
 
   it('function params that are not symbol is an error', () => {
-    expect(() => parsed('{:(aa + 3, d)};'))
-      .toThrow('Only symbols are allowed in function parameter lists. '
+    badParse('{:(aa + 3, d)};',
+      'Only symbols are allowed in function parameter lists. '
         + 'I found: '
         + '(\'operation\', \'+\', [\'symbol\', \'aa\'], [\'number\', \'3\']).'
-      )
+    )
   })
 
   it('a complex example program parses', () => {
@@ -278,19 +277,19 @@ describe('parser', () => {
 
 describe('bad parses', () => {
   it('two numbers in a row', () => {
-    badParse('100 101;').toThrow('Unexpected number token, \'101\'.');
+    badParse('100 101;','Unexpected number token, \'101\'.');
   })
 
   it('number butted up against a symbol', () => {
-    badParse('100dog = 1;').toThrow('Unexpected symbol token, \'dog\'.');
+    badParse('100dog = 1;', 'Unexpected symbol token, \'dog\'.');
   })
 
   it('number then string', () => {
-    badParse('100 "dog";').toThrow('Unexpected string token, \'dog\'.');
+    badParse('100 "dog";', 'Unexpected string token, \'dog\'.');
   })
 
   it('string then number', () => {
-    badParse('"dog" 100;').toThrow('Unexpected number token, \'100\'.');
+    badParse('"dog" 100;', 'Unexpected number token, \'100\'.');
   })
 
   it('crazy new token', () => {
