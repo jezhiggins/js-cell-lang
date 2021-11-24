@@ -6,6 +6,7 @@ import { program } from 'commander/esm.mjs'
 import { processNames } from './astprocessor/index.js'
 import { cellModes } from './mode/index.js'
 import { executeMode } from "./mode/execute-mode.js";
+import chalk from 'chalk'
 
 processNames.forEach(name => program.option(`--${name}`))
 
@@ -46,7 +47,14 @@ function runFiles(runFn, files, options) {
 
 function runRepl(runFn, options) {
   const evalCell = (cmd, context, filename, callback) => {
-    callback(null, runFn(cmd, options))
+    try {
+      callback(null, runFn(cmd, options))
+    } catch (e) {
+      if (e.recoverable)
+        return callback(new repl.Recoverable(e))
+      console.log(chalk.red(e.message))
+      callback(null)
+    }
   }
 
   repl.start({ prompt: '>>> ', eval: evalCell, ignoreUndefined: true});
