@@ -104,6 +104,8 @@ the Cell program with no arguments:
 'logical'
 ```
 
+There's also a [web console](https://jezhiggins.github.io/js-cell-webconsole/) which lets you run Cell directly in your browser. 
+
 ## How to write Cell programs
 
 See the explanation of [Cell Syntax](./docs/syntax.md), and [The if function](./docs/if.md).
@@ -154,6 +156,6 @@ which is a set of standard values and functions that all programs can use.
 
 ## License
 
-Copyright 2021 [JezUK Ltd](https://www.jezuk.co.uk/)
+Copyright 2021, 2022 [JezUK Ltd](https://www.jezuk.co.uk/)
 Licensed under the terms of the [MIT License](LICENSE).
 
